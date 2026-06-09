@@ -68,6 +68,7 @@
                 <button title="CSS" id="btn-settings"><i class="fas fa-code"></i></button>
             </div>
             <div class="toolbar-group" style="margin-left: auto;">
+                <button title="PORTABLE EXPORT" id="btn-export-portable"><i class="fas fa-file-export"></i></button>
                 <button id="btn-pdf">EXPORT PDF</button>
             </div>
         </header>
@@ -102,6 +103,30 @@
                 <div id="preview" class="markdown-body"></div>
             </div>
         </main>
+
+        <div id="image-inspector" class="hidden">
+            <div class="inspector-content">
+                <div class="inspector-header">
+                    <span>IMAGE PROPERTIES</span>
+                    <button id="btn-close-inspector">&times;</button>
+                </div>
+                <div class="inspector-body">
+                    <div class="inspector-group">
+                        <label>WIDTH:</label>
+                        <input type="range" id="inspector-width" min="50" max="1000" step="10">
+                        <span id="width-value">300</span>px
+                    </div>
+                    <div class="inspector-group">
+                        <label>ALIGN:</label>
+                        <div class="btn-toggle-group">
+                            <button data-align="left" class="active">LEFT</button>
+                            <button data-align="center">CENTER</button>
+                            <button data-align="right">RIGHT</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>

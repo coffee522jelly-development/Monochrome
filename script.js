@@ -4,6 +4,20 @@ const preview = document.getElementById('preview');
 let markdownParser;
 let mermaidCounter = 0;
 
+// Asset Store for images
+const AssetStore = {
+    assets: new Map(),
+    nextId: 1,
+    add(base64) {
+        const id = `img-${this.nextId++}`;
+        this.assets.set(id, base64);
+        return id;
+    },
+    get(id) {
+        return this.assets.get(id);
+    }
+};
+
 // Initialize Mermaid
 async function initMermaid() {
     if (typeof mermaid === 'undefined') return;
@@ -13,6 +27,33 @@ async function initMermaid() {
         theme: isDark ? 'dark' : 'default',
         securityLevel: 'loose',
         fontFamily: 'monospace',
+    });
+}
+
+// Pre-process Markdown for assets
+function preprocessMarkdown(text) {
+    // Regex to match ![alt|w=...|a=...](asset:id)
+    const assetRegex = /!\[([^\]|]*)(\|[^\]]*)?\]\(asset:([^)]+)\)/g;
+
+    return text.replace(assetRegex, (match, alt, params, id) => {
+        const base64 = AssetStore.get(id);
+        if (!base64) return match;
+
+        let width = "";
+        let align = "left";
+
+        if (params) {
+            const wMatch = params.match(/w=(\d+)/);
+            if (wMatch) width = `width="${wMatch[1]}"`;
+
+            if (params.includes("a=center")) align = "center";
+            if (params.includes("a=right")) align = "right";
+        }
+
+        const style = align === "center" ? 'style="display:block; margin-left:auto; margin-right:auto;"' :
+                      align === "right"  ? 'style="display:block; margin-left:auto;"' : "";
+
+        return `<img src="${base64}" alt="${alt}" ${width} ${style} data-asset-id="${id}">`;
     });
 }
 
@@ -27,17 +68,18 @@ async function updatePreview() {
     }
 
     try {
+        const processedContent = preprocessMarkdown(content);
         const encoder = new TextEncoder();
-        const contentBytes = encoder.encode(content);
+        const contentBytes = encoder.encode(processedContent);
         const output = markdownParser.parse(contentBytes);
 
-        // If output is Uint8Array, decode it back to string
         const html = (output instanceof Uint8Array)
             ? new TextDecoder().decode(output)
             : output;
 
         preview.innerHTML = html;
         await renderMermaid();
+        attachImageListeners();
     } catch (err) {
         console.error('Markdown parse error:', err);
     }
@@ -84,7 +126,7 @@ async function loadMarkdownWasm() {
 }
 
 // Init everything
-const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark for CAD look
+const savedTheme = localStorage.getItem('theme') || 'dark';
 initMermaid().then(() => {
     setTheme(savedTheme);
     loadMarkdownWasm();
@@ -138,6 +180,84 @@ async function renderMermaid() {
             }
         }
     }, 200);
+}
+
+// Image Adjustment logic
+let selectedAssetId = null;
+
+function attachImageListeners() {
+    const images = preview.querySelectorAll('img[data-asset-id]');
+    images.forEach(img => {
+        img.style.cursor = "pointer";
+        img.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showInspector(img);
+        });
+    });
+}
+
+function showInspector(img) {
+    selectedAssetId = img.getAttribute('data-asset-id');
+    const inspector = document.getElementById('image-inspector');
+    inspector.classList.remove('hidden');
+
+    const widthInput = document.getElementById('inspector-width');
+    const widthDisplay = document.getElementById('width-value');
+    const currentWidth = img.getAttribute('width') || img.naturalWidth;
+
+    widthInput.value = currentWidth;
+    widthDisplay.textContent = currentWidth;
+
+    // Set active align button
+    const alignButtons = document.querySelectorAll('.btn-toggle-group button');
+    const currentAlign = img.style.marginLeft === "auto" ? (img.style.marginRight === "auto" ? "center" : "right") : "left";
+
+    alignButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-align') === currentAlign);
+    });
+}
+
+const btnCloseInspector = document.getElementById('btn-close-inspector');
+if (btnCloseInspector) {
+    btnCloseInspector.addEventListener('click', () => {
+        document.getElementById('image-inspector').classList.add('hidden');
+        selectedAssetId = null;
+    });
+}
+
+const inspectorWidth = document.getElementById('inspector-width');
+if (inspectorWidth) {
+    inspectorWidth.addEventListener('input', (e) => {
+        const val = e.target.value;
+        document.getElementById('width-value').textContent = val;
+        const activeAlign = document.querySelector('.btn-toggle-group button.active').getAttribute('data-align');
+        updateAssetParams(val, activeAlign);
+    });
+}
+
+document.querySelectorAll('.btn-toggle-group button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.btn-toggle-group button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const width = document.getElementById('inspector-width').value;
+        updateAssetParams(width, btn.getAttribute('data-align'));
+    });
+});
+
+// Sync back to editor
+function updateAssetParams(width, align) {
+    if (!selectedAssetId) return;
+    const text = editor.value;
+    const regex = new RegExp(`!\\[([^\\]|]*)(\\|[^\\]]*)?\\]\\(asset:${selectedAssetId}\\)`, 'g');
+
+    const newText = text.replace(regex, (match, alt) => {
+        return `![${alt}|w=${width}|a=${align}](asset:${selectedAssetId})`;
+    });
+
+    if (text !== newText) {
+        editor.value = newText;
+        updatePreview();
+    }
 }
 
 // Helper to insert text at cursor
@@ -316,22 +436,6 @@ const mermaidTemplates = {
     quadrant: 'quadrantChart\n    title Reach and engagement of campaigns\n    x-axis Low Reach --> High Reach\n    y-axis Low Engagement --> High Engagement\n    quadrant-1 We should expand\n    quadrant-2 Need to promote\n    quadrant-3 Re-evaluate\n    quadrant-4 May be improved\n    Campaign A: [0.3, 0.6]\n    Campaign B: [0.45, 0.23]\n    Campaign C: [0.57, 0.69]\n    Campaign D: [0.78, 0.34]\n    Campaign E: [0.40, 0.34]\n    Campaign F: [0.58, 0.14]'
 };
 
-// Markdown templates
-const markdownTemplates = {
-    checklist_3: '- [ ] Item 1\n- [ ] Item 2\n- [ ] Item 3',
-    checklist_5: '- [ ] Item 1\n- [ ] Item 2\n- [ ] Item 3\n- [ ] Item 4\n- [ ] Item 5',
-    bullet_3: '- Item 1\n- Item 2\n- Item 3',
-    bullet_nested: '- Parent 1\n    - Child 1.1\n    - Child 1.2\n- Parent 2\n    - Child 2.1',
-    table_3x3: '| Header 1 | Header 2 | Header 3 |\n| --- | --- | --- |\n| Cell 1-1 | Cell 1-2 | Cell 1-3 |\n| Cell 2-1 | Cell 2-2 | Cell 2-3 |\n| Cell 3-1 | Cell 3-2 | Cell 3-3 |',
-    table_5x5: '| H1 | H2 | H3 | H4 | H5 |\n| --- | --- | --- | --- | --- |\n| C1-1 | C1-2 | C1-3 | C1-4 | C1-5 |\n| C2-1 | C2-2 | C2-3 | C2-4 | C2-5 |\n| C3-1 | C3-2 | C3-3 | C3-4 | C3-5 |\n| C4-1 | C4-2 | C4-3 | C4-4 | C4-5 |\n| C5-1 | C5-2 | C5-3 | C5-4 | C5-5 |',
-    table_header_only: '| Header 1 | Header 2 |\n| --- | --- |',
-    hr: '\n---\n',
-    math: '$$\nL = \\frac{1}{2} \\rho v^2 S C_L\n$$',
-    callout_info: '> [!INFO]\n> This is an informational callout.',
-    callout_warn: '> [!WARNING]\n> This is a warning callout.',
-    details: '<details>\n<summary>Click to expand</summary>\n\nContent here...\n</details>'
-};
-
 const mermaidPresets = document.getElementById('mermaid-presets');
 const mdPresets = document.getElementById('md-presets');
 
@@ -355,6 +459,22 @@ function handleMdSelection() {
 if (mermaidPresets) mermaidPresets.addEventListener('change', handleMermaidSelection);
 if (mdPresets) mdPresets.addEventListener('change', handleMdSelection);
 
+// Markdown templates
+const markdownTemplates = {
+    checklist_3: '- [ ] Item 1\n- [ ] Item 2\n- [ ] Item 3',
+    checklist_5: '- [ ] Item 1\n- [ ] Item 2\n- [ ] Item 3\n- [ ] Item 4\n- [ ] Item 5',
+    bullet_3: '- Item 1\n- Item 2\n- Item 3',
+    bullet_nested: '- Parent 1\n    - Child 1.1\n    - Child 1.2\n- Parent 2\n    - Child 2.1',
+    table_3x3: '| Header 1 | Header 2 | Header 3 |\n| --- | --- | --- |\n| Cell 1-1 | Cell 1-2 | Cell 1-3 |\n| Cell 2-1 | Cell 2-2 | Cell 2-3 |\n| Cell 3-1 | Cell 3-2 | Cell 3-3 |',
+    table_5x5: '| H1 | H2 | H3 | H4 | H5 |\n| --- | --- | --- | --- | --- |\n| C1-1 | C1-2 | C1-3 | C1-4 | C1-5 |\n| C2-1 | C2-2 | C2-3 | C2-4 | C2-5 |\n| C3-1 | C3-2 | C3-3 | C3-4 | C3-5 |\n| C4-1 | C4-2 | C4-3 | C4-4 | C4-5 |\n| C5-1 | C5-2 | C5-3 | C5-4 | C5-5 |',
+    table_header_only: '| Header 1 | Header 2 |\n| --- | --- |',
+    hr: '\n---\n',
+    math: '$$\nL = \\frac{1}{2} \\rho v^2 S C_L\n$$',
+    callout_info: '> [!INFO]\n> This is an informational callout.',
+    callout_warn: '> [!WARNING]\n> This is a warning callout.',
+    details: '<details>\n<summary>Click to expand</summary>\n\nContent here...\n</details>'
+};
+
 // Editor enhancements
 editor.addEventListener('keydown', (e) => {
     if (e.key === 'Tab') {
@@ -371,6 +491,31 @@ editor.addEventListener('keydown', (e) => {
         else if (e.key === 's') { e.preventDefault(); document.getElementById('btn-pdf').click(); }
     }
 });
+
+// Portable Export (Embed Base64 at end of file)
+const btnExportPortable = document.getElementById('btn-export-portable');
+if (btnExportPortable) {
+    btnExportPortable.addEventListener('click', () => {
+        let content = editor.value;
+        let references = "\n\n<!-- ASSETS -->\n";
+
+        AssetStore.assets.forEach((data, id) => {
+            if (content.includes(`(asset:${id})`)) {
+                references += `[${id}]: ${data}\n`;
+                // Convert internal asset:id to standard markdown reference [id]
+                content = content.replace(new RegExp(`\\(asset:${id}\\)`, 'g'), `[${id}]`);
+            }
+        });
+
+        const blob = new Blob([content + references], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'document_portable.md';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+}
 
 // PDF Export
 const btnPdf = document.getElementById('btn-pdf');
@@ -417,22 +562,11 @@ document.getElementById('preview-container').addEventListener('scroll', (e) => {
 editor.addEventListener('input', () => updatePreview());
 
 // Image drag and drop
-editor.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    editor.classList.add('drag-active');
-});
-
-editor.addEventListener('dragleave', (e) => {
+function handleDrop(e) {
     e.preventDefault();
     e.stopPropagation();
     editor.classList.remove('drag-active');
-});
-
-editor.addEventListener('drop', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    editor.classList.remove('drag-active');
+    preview.classList.remove('drag-active');
 
     const files = e.dataTransfer.files;
     if (files.length > 0) {
@@ -441,11 +575,20 @@ editor.addEventListener('drop', (e) => {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const base64Data = event.target.result;
-                    const imageMarkdown = `\n![${file.name}](${base64Data})\n`;
+                    const id = AssetStore.add(base64Data);
+                    const imageMarkdown = `\n![${file.name}|w=300|a=left](asset:${id})\n`;
                     insertAtCursor(imageMarkdown);
                 };
                 reader.readAsDataURL(file);
             }
         });
     }
-});
+}
+
+editor.addEventListener('dragover', (e) => { e.preventDefault(); editor.classList.add('drag-active'); });
+editor.addEventListener('dragleave', () => { editor.classList.remove('drag-active'); });
+editor.addEventListener('drop', handleDrop);
+
+preview.addEventListener('dragover', (e) => { e.preventDefault(); preview.classList.add('drag-active'); });
+preview.addEventListener('dragleave', () => { preview.classList.remove('drag-active'); });
+preview.addEventListener('drop', handleDrop);

@@ -242,6 +242,86 @@ optgroup {
     font-size: 12px;
 }
 
+#preview img.drag-active {
+    outline: 2px dashed var(--btn-success-bg);
+    opacity: 0.7;
+}
+
+/* Property Inspector */
+#image-inspector {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 200;
+}
+
+.inspector-content {
+    background-color: var(--toolbar-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    width: 280px;
+}
+
+.inspector-header {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+#btn-close-inspector {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+}
+
+.inspector-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.inspector-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 11px;
+}
+
+.btn-toggle-group {
+    display: flex;
+    border: 1px solid var(--border-color);
+}
+
+.btn-toggle-group button {
+    flex: 1;
+    border: none;
+    border-right: 1px solid var(--border-color);
+    font-size: 10px;
+    padding: 4px;
+}
+
+.btn-toggle-group button:last-child {
+    border-right: none;
+}
+
+.btn-toggle-group button.active {
+    background-color: var(--btn-primary-bg);
+    color: white;
+}
+
+input[type="range"] {
+    accent-color: var(--btn-primary-bg);
+    cursor: ew-resize;
+}
+
 /* Settings Overlay */
 #settings-panel {
     position: fixed;
