@@ -102,31 +102,35 @@
             <div id="preview-container">
                 <div id="preview" class="markdown-body"></div>
             </div>
-        </main>
-
-        <div id="image-inspector" class="hidden">
-            <div class="inspector-content">
-                <div class="inspector-header">
-                    <span>IMAGE PROPERTIES</span>
-                    <button id="btn-close-inspector">&times;</button>
+            <aside id="properties-sidebar">
+                <div class="sidebar-header">
+                    <span>PROPERTIES</span>
                 </div>
-                <div class="inspector-body">
-                    <div class="inspector-group">
-                        <label>WIDTH:</label>
-                        <input type="range" id="inspector-width" min="50" max="1000" step="10">
-                        <span id="width-value">300</span>px
+                <div id="no-selection-msg">NO SELECTION</div>
+                <div id="image-properties" class="hidden">
+                    <div class="property-group">
+                        <label>ALT TEXT</label>
+                        <input type="text" id="prop-alt" placeholder="Image alt text">
                     </div>
-                    <div class="inspector-group">
-                        <label>ALIGN:</label>
-                        <div class="btn-toggle-group">
-                            <button data-align="left" class="active">LEFT</button>
+                    <div class="property-group">
+                        <label>WIDTH (<span id="width-val">300</span>px)</label>
+                        <input type="range" id="prop-width" min="50" max="1200" step="10">
+                    </div>
+                    <div class="property-group">
+                        <label>ALIGNMENT</label>
+                        <div class="prop-toggle-group">
+                            <button data-align="left">LEFT</button>
                             <button data-align="center">CENTER</button>
                             <button data-align="right">RIGHT</button>
                         </div>
                     </div>
+                    <div class="property-group" style="margin-top: 20px; font-size: 10px; color: #888;">
+                        <label>ASSET ID</label>
+                        <code id="prop-id"></code>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </aside>
+        </main>
     </div>
     <script src="script.js"></script>
 </body>

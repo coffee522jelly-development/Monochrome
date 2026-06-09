@@ -182,80 +182,104 @@ async function renderMermaid() {
     }, 200);
 }
 
-// Image Adjustment logic
+// Image Selection & Sidebar Logic
 let selectedAssetId = null;
 
 function attachImageListeners() {
     const images = preview.querySelectorAll('img[data-asset-id]');
     images.forEach(img => {
         img.style.cursor = "pointer";
+        if (img.getAttribute('data-asset-id') === selectedAssetId) {
+            img.classList.add('selected-asset');
+        }
         img.addEventListener('click', (e) => {
             e.stopPropagation();
-            showInspector(img);
+            selectImage(img);
         });
+    });
+
+    // Clear selection when clicking preview background
+    preview.addEventListener('click', (e) => {
+        if (e.target === preview) clearSelection();
     });
 }
 
-function showInspector(img) {
+function selectImage(img) {
     selectedAssetId = img.getAttribute('data-asset-id');
-    const inspector = document.getElementById('image-inspector');
-    inspector.classList.remove('hidden');
 
-    const widthInput = document.getElementById('inspector-width');
-    const widthDisplay = document.getElementById('width-value');
-    const currentWidth = img.getAttribute('width') || img.naturalWidth;
+    // UI Update
+    preview.querySelectorAll('img').forEach(i => i.classList.remove('selected-asset'));
+    img.classList.add('selected-asset');
 
+    document.getElementById('no-selection-msg').classList.add('hidden');
+    document.getElementById('image-properties').classList.remove('hidden');
+
+    // Populate Sidebar
+    const altInput = document.getElementById('prop-alt');
+    const widthInput = document.getElementById('prop-width');
+    const widthDisplay = document.getElementById('width-val');
+    const idDisplay = document.getElementById('prop-id');
+
+    altInput.value = img.alt || "";
+    const currentWidth = img.getAttribute('width') || img.naturalWidth || 300;
     widthInput.value = currentWidth;
     widthDisplay.textContent = currentWidth;
+    idDisplay.textContent = selectedAssetId;
 
-    // Set active align button
-    const alignButtons = document.querySelectorAll('.btn-toggle-group button');
     const currentAlign = img.style.marginLeft === "auto" ? (img.style.marginRight === "auto" ? "center" : "right") : "left";
-
-    alignButtons.forEach(btn => {
+    document.querySelectorAll('.prop-toggle-group button').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-align') === currentAlign);
     });
 }
 
-const btnCloseInspector = document.getElementById('btn-close-inspector');
-if (btnCloseInspector) {
-    btnCloseInspector.addEventListener('click', () => {
-        document.getElementById('image-inspector').classList.add('hidden');
-        selectedAssetId = null;
+function clearSelection() {
+    selectedAssetId = null;
+    preview.querySelectorAll('img').forEach(i => i.classList.remove('selected-asset'));
+    document.getElementById('no-selection-msg').classList.remove('hidden');
+    document.getElementById('image-properties').classList.add('hidden');
+}
+
+// Sidebar Event Listeners
+const propAlt = document.getElementById('prop-alt');
+const propWidth = document.getElementById('prop-width');
+
+if (propAlt) {
+    propAlt.addEventListener('input', () => syncProperties());
+}
+
+if (propWidth) {
+    propWidth.addEventListener('input', (e) => {
+        document.getElementById('width-val').textContent = e.target.value;
+        syncProperties();
     });
 }
 
-const inspectorWidth = document.getElementById('inspector-width');
-if (inspectorWidth) {
-    inspectorWidth.addEventListener('input', (e) => {
-        const val = e.target.value;
-        document.getElementById('width-value').textContent = val;
-        const activeAlign = document.querySelector('.btn-toggle-group button.active').getAttribute('data-align');
-        updateAssetParams(val, activeAlign);
-    });
-}
-
-document.querySelectorAll('.btn-toggle-group button').forEach(btn => {
+document.querySelectorAll('.prop-toggle-group button').forEach(btn => {
     btn.addEventListener('click', () => {
-        document.querySelectorAll('.btn-toggle-group button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.prop-toggle-group button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const width = document.getElementById('inspector-width').value;
-        updateAssetParams(width, btn.getAttribute('data-align'));
+        syncProperties();
     });
 });
 
-// Sync back to editor
-function updateAssetParams(width, align) {
+function syncProperties() {
     if (!selectedAssetId) return;
+
+    const alt = document.getElementById('prop-alt').value;
+    const width = document.getElementById('prop-width').value;
+    const align = document.querySelector('.prop-toggle-group button.active').getAttribute('data-align');
+
     const text = editor.value;
     const regex = new RegExp(`!\\[([^\\]|]*)(\\|[^\\]]*)?\\]\\(asset:${selectedAssetId}\\)`, 'g');
 
-    const newText = text.replace(regex, (match, alt) => {
+    const newText = text.replace(regex, (match) => {
         return `![${alt}|w=${width}|a=${align}](asset:${selectedAssetId})`;
     });
 
     if (text !== newText) {
+        const cursor = editor.selectionStart;
         editor.value = newText;
+        editor.setSelectionRange(cursor, cursor);
         updatePreview();
     }
 }
