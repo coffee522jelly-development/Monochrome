@@ -272,29 +272,67 @@ function syncProperties() {
     const text = editor.value;
     const regex = new RegExp(`!\\[([^\\]|]*)(\\|[^\\]]*)?\\]\\(asset:${selectedAssetId}\\)`, 'g');
 
-    const newText = text.replace(regex, (match) => {
-        return `![${alt}|w=${width}|a=${align}](asset:${selectedAssetId})`;
-    });
+    // Find the first match to replace via execCommand to maintain undo history
+    const match = regex.exec(text);
+    if (match) {
+        const start = match.index;
+        const end = start + match[0].length;
+        const replacement = `![${alt}|w=${width}|a=${align}](asset:${selectedAssetId})`;
 
-    if (text !== newText) {
-        const cursor = editor.selectionStart;
-        editor.value = newText;
-        editor.setSelectionRange(cursor, cursor);
-        updatePreview();
+        if (match[0] !== replacement) {
+            const savedStart = editor.selectionStart;
+            const savedEnd = editor.selectionEnd;
+
+            editor.focus();
+            editor.setSelectionRange(start, end);
+
+            try {
+                if (!document.execCommand('insertText', false, replacement)) {
+                    editor.value = text.substring(0, start) + replacement + text.substring(end);
+                    editor.setSelectionRange(savedStart, savedEnd);
+                } else {
+                    // Try to restore previous selection if it wasn't the image tag
+                    if (savedStart > end) {
+                        const offset = replacement.length - match[0].length;
+                        editor.setSelectionRange(savedStart + offset, savedEnd + offset);
+                    } else if (savedStart < start) {
+                        editor.setSelectionRange(savedStart, savedEnd);
+                    }
+                }
+            } catch (e) {
+                editor.value = text.substring(0, start) + replacement + text.substring(end);
+            }
+            updatePreview();
+        }
     }
 }
 
-// Helper to insert text at cursor
+// Helper to insert text at cursor (supporting Undo/Redo)
 function insertAtCursor(before, after = '') {
+    editor.focus();
     const start = editor.selectionStart;
     const end = editor.selectionEnd;
     const text = editor.value;
     const selection = text.substring(start, end);
     const replacement = before + selection + after;
-    editor.value = text.substring(0, start) + replacement + text.substring(end);
-    editor.focus();
-    const newCursorPos = start + before.length + selection.length + after.length;
-    editor.setSelectionRange(newCursorPos, newCursorPos);
+
+    // Use execCommand to preserve Undo stack
+    try {
+        if (!document.execCommand('insertText', false, replacement)) {
+            // Fallback for browsers that don't support insertText in textarea
+            editor.value = text.substring(0, start) + replacement + text.substring(end);
+            editor.setSelectionRange(start + replacement.length, start + replacement.length);
+        } else {
+            // Adjust cursor position if wrapping selection (e.g. bolding)
+            if (after.length > 0 && selection.length > 0) {
+                // If it was a wrapping operation, the cursor usually ends up at the end of 'after'.
+                // If there was no selection, we might want it in between, but for presets, end is fine.
+            }
+        }
+    } catch (e) {
+        editor.value = text.substring(0, start) + replacement + text.substring(end);
+    }
+
     updatePreview();
 }
 
@@ -503,11 +541,7 @@ const markdownTemplates = {
 editor.addEventListener('keydown', (e) => {
     if (e.key === 'Tab') {
         e.preventDefault();
-        const start = editor.selectionStart;
-        const end = editor.selectionEnd;
-        editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
-        editor.selectionStart = editor.selectionEnd = start + 4;
-        updatePreview();
+        insertAtCursor('    ');
     }
     if (e.ctrlKey || e.metaKey) {
         if (e.key === 'b') { e.preventDefault(); insertAtCursor('**', '**'); }
