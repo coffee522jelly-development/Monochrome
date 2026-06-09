@@ -29,7 +29,13 @@ async function updatePreview() {
     try {
         const encoder = new TextEncoder();
         const contentBytes = encoder.encode(content);
-        const html = markdownParser.parse(contentBytes);
+        const output = markdownParser.parse(contentBytes);
+
+        // If output is Uint8Array, decode it back to string
+        const html = (output instanceof Uint8Array)
+            ? new TextDecoder().decode(output)
+            : output;
+
         preview.innerHTML = html;
         await renderMermaid();
     } catch (err) {
@@ -195,9 +201,87 @@ if (customCssEditor) {
 }
 
 const cssPresetStyles = {
-    default: '',
-    modern: `.markdown-body { font-family: sans-serif; color: #add8e6; }`,
-    classic: `.markdown-body { font-family: serif; color: #f5deb3; line-height: 1.2; }`
+    default: `/* TECHNICAL (CAD) */
+.markdown-body {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-color);
+}
+.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+    border-bottom: 1px solid var(--border-color);
+    text-transform: uppercase;
+    font-weight: normal;
+    padding-bottom: 0.2em;
+}
+.markdown-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+}
+.markdown-body table th, .markdown-body table td {
+    border: 1px solid var(--border-color);
+    padding: 8px;
+    text-align: left;
+}
+.markdown-body table th {
+    background-color: var(--toolbar-bg);
+}
+.markdown-body input[type="checkbox"] {
+    accent-color: var(--btn-success-bg);
+    margin-right: 8px;
+}`,
+    modern: `/* BLUEPRINT (ENGINEERING) */
+.markdown-body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: #a0c4ff;
+    background-color: #001524;
+}
+.markdown-body h1, .markdown-body h2 {
+    color: #fff;
+    border-bottom: 2px solid #577590;
+    font-style: italic;
+}
+.markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+    color: #90be6d;
+}
+.markdown-body table {
+    border: 1px solid #577590;
+}
+.markdown-body table th {
+    background-color: #577590;
+    color: #fff;
+}
+.markdown-body input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: crosshair;
+}`,
+    classic: `/* DOCUMENT (REPORT) */
+.markdown-body {
+    font-family: 'Georgia', serif;
+    color: #1a1a1a;
+    background-color: #fdfdfd;
+    padding: 40px !important;
+    line-height: 1.8;
+}
+.markdown-body h1 {
+    text-align: center;
+    border-bottom: 2px solid #000;
+}
+.markdown-body h2 {
+    border-left: 5px solid #000;
+    padding-left: 15px;
+}
+.markdown-body table {
+    border-top: 2px solid #000;
+    border-bottom: 2px solid #000;
+}
+.markdown-body table th {
+    border-bottom: 1px solid #000;
+}
+.markdown-body input[type="checkbox"] {
+    transform: scale(1.2);
+    vertical-align: middle;
+}`
 };
 
 if (cssPresets) {
@@ -228,14 +312,24 @@ const mermaidTemplates = {
 };
 
 const btnInsertMermaid = document.getElementById('btn-insert-mermaid');
+const mermaidPresets = document.getElementById('mermaid-presets');
+
+function handleMermaidSelection() {
+    const preset = mermaidPresets.value;
+    if (preset && mermaidTemplates[preset]) {
+        const template = `\n\`\`\`mermaid\n${mermaidTemplates[preset]}\n\`\`\`\n`;
+        insertAtCursor(template);
+        // Reset select for subsequent selection of the same item
+        mermaidPresets.value = "";
+    }
+}
+
 if (btnInsertMermaid) {
-    btnInsertMermaid.addEventListener('click', () => {
-        const preset = document.getElementById('mermaid-presets').value;
-        if (preset && mermaidTemplates[preset]) {
-            const template = `\n\`\`\`mermaid\n${mermaidTemplates[preset]}\n\`\`\`\n`;
-            insertAtCursor(template);
-        }
-    });
+    btnInsertMermaid.addEventListener('click', handleMermaidSelection);
+}
+
+if (mermaidPresets) {
+    mermaidPresets.addEventListener('change', handleMermaidSelection);
 }
 
 // Editor enhancements
@@ -260,14 +354,22 @@ const btnPdf = document.getElementById('btn-pdf');
 if (btnPdf) {
     btnPdf.addEventListener('click', () => {
         const element = document.getElementById('preview');
+        const isDarkMode = document.body.classList.contains('dark-mode') || !document.body.classList.contains('light-mode');
+
         const opt = {
-            margin: 0,
-            filename: 'export.pdf',
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2, backgroundColor: '#000000' },
+            margin: 10,
+            filename: 'markdown-export.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: {
+                scale: 2,
+                backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
+                useCORS: true
+            },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-        if (typeof html2pdf !== 'undefined') html2pdf().set(opt).from(element).save();
+        if (typeof html2pdf !== 'undefined') {
+            html2pdf().set(opt).from(element).save();
+        }
     });
 }
 
