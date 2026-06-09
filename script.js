@@ -7,12 +7,12 @@ let mermaidCounter = 0;
 // Initialize Mermaid
 async function initMermaid() {
     if (typeof mermaid === 'undefined') return;
-    const isDark = document.body.classList.contains('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode') || !document.body.classList.contains('light-mode');
     mermaid.initialize({
         startOnLoad: false,
         theme: isDark ? 'dark' : 'default',
         securityLevel: 'loose',
-        fontFamily: 'inherit',
+        fontFamily: 'monospace',
     });
 }
 
@@ -27,8 +27,6 @@ async function updatePreview() {
     }
 
     try {
-        // Some versions of markdown-wasm have issues with string inputs in certain environments
-        // Passing a Uint8Array can be more reliable.
         const encoder = new TextEncoder();
         const contentBytes = encoder.encode(content);
         const html = markdownParser.parse(contentBytes);
@@ -41,15 +39,23 @@ async function updatePreview() {
 
 // Theme switching
 const btnTheme = document.getElementById('btn-theme');
-const themeIcon = btnTheme.querySelector('i');
+const themeIcon = btnTheme ? btnTheme.querySelector('i') : null;
 
 async function setTheme(theme) {
     if (theme === 'dark') {
+        document.body.classList.remove('light-mode');
         document.body.classList.add('dark-mode');
-        if (themeIcon) themeIcon.classList.replace('fa-moon', 'fa-sun');
+        if (themeIcon) {
+            themeIcon.classList.remove('fa-sun', 'fa-adjust');
+            themeIcon.classList.add('fa-moon');
+        }
     } else {
         document.body.classList.remove('dark-mode');
-        if (themeIcon) themeIcon.classList.replace('fa-sun', 'fa-moon');
+        document.body.classList.add('light-mode');
+        if (themeIcon) {
+            themeIcon.classList.remove('fa-moon', 'fa-adjust');
+            themeIcon.classList.add('fa-sun');
+        }
     }
     localStorage.setItem('theme', theme);
     await initMermaid();
@@ -72,16 +78,18 @@ async function loadMarkdownWasm() {
 }
 
 // Init everything
-const savedTheme = localStorage.getItem('theme') || 'light';
+const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark for CAD look
 initMermaid().then(() => {
     setTheme(savedTheme);
     loadMarkdownWasm();
 });
 
-btnTheme.addEventListener('click', () => {
-    const isDark = document.body.classList.contains('dark-mode');
-    setTheme(isDark ? 'light' : 'dark');
-});
+if (btnTheme) {
+    btnTheme.addEventListener('click', () => {
+        const isDark = !document.body.classList.contains('light-mode');
+        setTheme(isDark ? 'light' : 'dark');
+    });
+}
 
 // Throttle for Mermaid rendering
 let renderTimeout;
@@ -99,10 +107,8 @@ async function renderMermaid() {
             const id = `mermaid-svg-${Date.now()}-${mermaidCounter++}`;
 
             try {
-                // Ensure we don't render the same block multiple times if not needed
                 const nextEl = pre.nextElementSibling;
                 if (nextEl && nextEl.classList.contains('mermaid-rendered')) {
-                    // Check if content changed (optional, here we just replace)
                     nextEl.remove();
                 }
 
@@ -115,14 +121,13 @@ async function renderMermaid() {
             } catch (err) {
                 console.error('Mermaid render error:', err);
                 pre.style.display = 'block';
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'mermaid-error';
-                errorDiv.textContent = 'Mermaid Error: ' + err.message;
-                // Avoid duplicate error messages
                 const nextEl = pre.nextElementSibling;
                 if (nextEl && nextEl.classList.contains('mermaid-error')) {
                     nextEl.remove();
                 }
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'mermaid-error';
+                errorDiv.textContent = 'ERR: ' + err.message;
                 pre.insertAdjacentElement('afterend', errorDiv);
             }
         }
@@ -144,13 +149,20 @@ function insertAtCursor(before, after = '') {
 }
 
 // Formatting buttons
-document.getElementById('btn-bold').addEventListener('click', () => insertAtCursor('**', '**'));
-document.getElementById('btn-italic').addEventListener('click', () => insertAtCursor('*', '*'));
-document.getElementById('btn-header').addEventListener('click', () => insertAtCursor('# ', ''));
-document.getElementById('btn-list').addEventListener('click', () => insertAtCursor('- ', ''));
-document.getElementById('btn-link').addEventListener('click', () => insertAtCursor('[', '](url)'));
-document.getElementById('btn-quote').addEventListener('click', () => insertAtCursor('> ', ''));
-document.getElementById('btn-code').addEventListener('click', () => insertAtCursor('`', '`'));
+const btnMap = {
+    'btn-bold': ['**', '**'],
+    'btn-italic': ['*', '*'],
+    'btn-header': ['# ', ''],
+    'btn-list': ['- ', ''],
+    'btn-link': ['[', '](url)'],
+    'btn-quote': ['> ', ''],
+    'btn-code': ['`', '`']
+};
+
+Object.entries(btnMap).forEach(([id, [before, after]]) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => insertAtCursor(before, after));
+});
 
 // Settings panel
 const settingsPanel = document.getElementById('settings-panel');
@@ -160,97 +172,71 @@ const customCssEditor = document.getElementById('custom-css-editor');
 const cssPresets = document.getElementById('css-presets');
 const styleTag = document.getElementById('user-custom-css');
 
-btnSettings.addEventListener('click', () => {
-    settingsPanel.classList.remove('hidden');
-});
+if (btnSettings) btnSettings.addEventListener('click', () => settingsPanel.classList.remove('hidden'));
+if (btnCloseSettings) btnCloseSettings.addEventListener('click', () => settingsPanel.classList.add('hidden'));
 
-btnCloseSettings.addEventListener('click', () => {
-    settingsPanel.classList.add('hidden');
-});
-
-settingsPanel.addEventListener('click', (e) => {
-    if (e.target === settingsPanel) {
-        settingsPanel.classList.add('hidden');
-    }
-});
+if (settingsPanel) {
+    settingsPanel.addEventListener('click', (e) => {
+        if (e.target === settingsPanel) {
+            settingsPanel.classList.add('hidden');
+        }
+    });
+}
 
 function applyCustomCss(css) {
     styleTag.textContent = css;
     localStorage.setItem('customCss', css);
 }
 
-customCssEditor.addEventListener('input', (e) => {
-    applyCustomCss(e.target.value);
-});
+if (customCssEditor) {
+    customCssEditor.addEventListener('input', (e) => {
+        applyCustomCss(e.target.value);
+    });
+}
 
 const cssPresetStyles = {
     default: '',
-    modern: `.markdown-body {
-    font-family: 'Inter', sans-serif;
-    color: #1a202c;
-    max-width: 800px;
-    margin: 0 auto;
-}
-.markdown-body h1 {
-    color: #2b6cb0;
-    font-size: 2.5em;
-    border-bottom: 2px solid #ebf8ff;
-}
-.markdown-body p {
-    font-size: 1.1em;
-    line-height: 1.8;
-}`,
-    classic: `.markdown-body {
-    font-family: 'Georgia', serif;
-    color: #111;
-    line-height: 1.4;
-    column-count: 1;
-}
-.markdown-body h1 {
-    text-align: center;
-    border-bottom: 3px double #000;
-    text-transform: uppercase;
-}
-.markdown-body blockquote {
-    font-style: italic;
-    border-left: none;
-    text-align: center;
-    padding: 20px;
-}`
+    modern: `.markdown-body { font-family: sans-serif; color: #add8e6; }`,
+    classic: `.markdown-body { font-family: serif; color: #f5deb3; line-height: 1.2; }`
 };
 
-cssPresets.addEventListener('change', (e) => {
-    const preset = e.target.value;
-    if (preset in cssPresetStyles) {
-        customCssEditor.value = cssPresetStyles[preset];
-        applyCustomCss(cssPresetStyles[preset]);
-    }
-});
+if (cssPresets) {
+    cssPresets.addEventListener('change', (e) => {
+        const preset = e.target.value;
+        if (preset in cssPresetStyles) {
+            customCssEditor.value = cssPresetStyles[preset];
+            applyCustomCss(cssPresetStyles[preset]);
+        }
+    });
+}
 
 const savedCss = localStorage.getItem('customCss');
-if (savedCss) {
+if (savedCss && customCssEditor) {
     customCssEditor.value = savedCss;
     applyCustomCss(savedCss);
 }
 
-// Mermaid presets
+// Mermaid templates
 const mermaidTemplates = {
-    flowchart: 'graph TD\n    A[Start] --> B{Is it?}\n    B -- Yes --> C[OK]\n    B -- No --> D[KO]',
-    sequence: 'sequenceDiagram\n    Alice->>Bob: Hello Bob, how are you?\n    Bob-->>Alice: Jolly good!',
-    gantt: 'gantt\n    title A Gantt Diagram\n    section Section\n    A task           :a1, 2023-01-01, 30d\n    Another task     :after a1  , 20d',
-    class: 'classDiagram\n    Animal <|-- Duck\n    Animal <|-- Fish\n    Animal <|-- Zebra\n    class Animal{\n        +int age\n        +String gender\n        +isMammal()\n        +mate()\n    }',
-    state: 'stateDiagram-v2\n    [*] --> Still\n    Still --> [*]\n    Still --> Moving\n    Moving --> Still\n    Moving --> Crash\n    Crash --> [*]',
-    er: 'erDiagram\n    CUSTOMER ||--o{ ORDER : places\n    ORDER ||--|{ LINE-ITEM : contains\n    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses',
-    pie: 'pie title Pets adopted by volunteers\n    "Dogs" : 386\n    "Cats" : 85\n    "Rats" : 15'
+    flowchart: 'graph TD\n    A[START] --> B{CHECK}\n    B -- YES --> C[OK]\n    B -- NO --> D[ERR]',
+    sequence: 'sequenceDiagram\n    USR->>SYS: REQ\n    SYS-->>USR: RSP',
+    gantt: 'gantt\n    section S1\n    T1: 2023-01-01, 10d',
+    class: 'classDiagram\n    C1 <|-- C2',
+    state: 'stateDiagram-v2\n    S1 --> S2',
+    er: 'erDiagram\n    E1 ||--o{ E2 : R1',
+    pie: 'pie title T1\n    "V1" : 50\n    "V2" : 50'
 };
 
-document.getElementById('btn-insert-mermaid').addEventListener('click', () => {
-    const preset = document.getElementById('mermaid-presets').value;
-    if (preset && mermaidTemplates[preset]) {
-        const template = `\n\`\`\`mermaid\n${mermaidTemplates[preset]}\n\`\`\`\n`;
-        insertAtCursor(template);
-    }
-});
+const btnInsertMermaid = document.getElementById('btn-insert-mermaid');
+if (btnInsertMermaid) {
+    btnInsertMermaid.addEventListener('click', () => {
+        const preset = document.getElementById('mermaid-presets').value;
+        if (preset && mermaidTemplates[preset]) {
+            const template = `\n\`\`\`mermaid\n${mermaidTemplates[preset]}\n\`\`\`\n`;
+            insertAtCursor(template);
+        }
+    });
+}
 
 // Editor enhancements
 editor.addEventListener('keydown', (e) => {
@@ -263,58 +249,44 @@ editor.addEventListener('keydown', (e) => {
         updatePreview();
     }
     if (e.ctrlKey || e.metaKey) {
-        if (e.key === 'b') {
-            e.preventDefault();
-            insertAtCursor('**', '**');
-        } else if (e.key === 'i') {
-            e.preventDefault();
-            insertAtCursor('*', '*');
-        } else if (e.key === 's') {
-            e.preventDefault();
-            document.getElementById('btn-pdf').click();
-        }
+        if (e.key === 'b') { e.preventDefault(); insertAtCursor('**', '**'); }
+        else if (e.key === 'i') { e.preventDefault(); insertAtCursor('*', '*'); }
+        else if (e.key === 's') { e.preventDefault(); document.getElementById('btn-pdf').click(); }
     }
 });
 
 // PDF Export
-document.getElementById('btn-pdf').addEventListener('click', () => {
-    const element = document.getElementById('preview');
-    const opt = {
-        margin:       10,
-        filename:     'markdown-export.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    if (typeof html2pdf !== 'undefined') {
-        html2pdf().set(opt).from(element).save();
-    }
-});
+const btnPdf = document.getElementById('btn-pdf');
+if (btnPdf) {
+    btnPdf.addEventListener('click', () => {
+        const element = document.getElementById('preview');
+        const opt = {
+            margin: 0,
+            filename: 'export.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 2, backgroundColor: '#000000' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        if (typeof html2pdf !== 'undefined') html2pdf().set(opt).from(element).save();
+    });
+}
 
-// Scroll synchronization
+// Scroll sync
 let isScrolling = false;
 editor.addEventListener('scroll', () => {
-    if (isScrolling) {
-        isScrolling = false;
-        return;
-    }
+    if (isScrolling) { isScrolling = false; return; }
     isScrolling = true;
     const scrollPercentage = editor.scrollTop / (editor.scrollHeight - editor.clientHeight);
-    const previewContainer = document.getElementById('preview-container');
-    previewContainer.scrollTop = scrollPercentage * (previewContainer.scrollHeight - previewContainer.clientHeight);
+    const pc = document.getElementById('preview-container');
+    pc.scrollTop = scrollPercentage * (pc.scrollHeight - pc.clientHeight);
 });
 
 document.getElementById('preview-container').addEventListener('scroll', (e) => {
-    if (isScrolling) {
-        isScrolling = false;
-        return;
-    }
+    if (isScrolling) { isScrolling = false; return; }
     isScrolling = true;
-    const previewContainer = e.target;
-    const scrollPercentage = previewContainer.scrollTop / (previewContainer.scrollHeight - previewContainer.clientHeight);
+    const pc = e.target;
+    const scrollPercentage = pc.scrollTop / (pc.scrollHeight - pc.clientHeight);
     editor.scrollTop = scrollPercentage * (editor.scrollHeight - editor.clientHeight);
 });
 
-editor.addEventListener('input', () => {
-    updatePreview();
-});
+editor.addEventListener('input', () => updatePreview());

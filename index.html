@@ -3,76 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Markdown WASM Editor</title>
+    <title>CAD-MD EDITOR</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style id="user-custom-css"></style>
-    <!-- Load markdown-wasm -->
     <script src="https://cdn.jsdelivr.net/npm/markdown-wasm@1.2.0/dist/markdown.js"></script>
-    <!-- Load mermaid -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
-    <!-- Load html2pdf.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div id="app">
         <header id="toolbar">
             <div class="toolbar-group">
-                <button title="太字 (Ctrl+B)" id="btn-bold"><i class="fas fa-bold"></i></button>
-                <button title="斜体 (Ctrl+I)" id="btn-italic"><i class="fas fa-italic"></i></button>
-                <button title="見出し" id="btn-header"><i class="fas fa-heading"></i></button>
-                <button title="リスト" id="btn-list"><i class="fas fa-list-ul"></i></button>
-                <button title="リンク" id="btn-link"><i class="fas fa-link"></i></button>
-                <button title="引用" id="btn-quote"><i class="fas fa-quote-left"></i></button>
-                <button title="コード" id="btn-code"><i class="fas fa-code"></i></button>
+                <button title="BOLD" id="btn-bold">B</button>
+                <button title="ITALIC" id="btn-italic">I</button>
+                <button title="HEADER" id="btn-header">H</button>
+                <button title="LIST" id="btn-list">LI</button>
+                <button title="LINK" id="btn-link">LN</button>
+                <button title="QUOTE" id="btn-quote">QT</button>
+                <button title="CODE" id="btn-code">&lt;/&gt;</button>
             </div>
             <div class="toolbar-group">
                 <select id="mermaid-presets">
-                    <option value="">Mermaid プリセットを選択...</option>
-                    <option value="flowchart">フローチャート</option>
-                    <option value="sequence">シーケンス図</option>
-                    <option value="gantt">ガントチャート</option>
-                    <option value="class">クラス図</option>
-                    <option value="state">状態遷移図</option>
-                    <option value="er">ER図</option>
-                    <option value="pie">パイチャート</option>
+                    <option value="">MERMAID...</option>
+                    <option value="flowchart">FLOW</option>
+                    <option value="sequence">SEQ</option>
+                    <option value="gantt">GANTT</option>
+                    <option value="class">CLASS</option>
+                    <option value="state">STATE</option>
+                    <option value="er">ER</option>
+                    <option value="pie">PIE</option>
                 </select>
-                <button id="btn-insert-mermaid">挿入</button>
+                <button id="btn-insert-mermaid">+</button>
             </div>
             <div class="toolbar-group">
-                <button title="テーマ切り替え" id="btn-theme"><i class="fas fa-moon"></i></button>
-                <button title="CSS設定" id="btn-settings"><i class="fas fa-cog"></i></button>
+                <button title="THEME" id="btn-theme"><i class="fas fa-adjust"></i></button>
+                <button title="CSS" id="btn-settings"><i class="fas fa-code"></i></button>
             </div>
-            <div class="toolbar-group">
-                <button id="btn-pdf"><i class="fas fa-file-pdf"></i> PDFで保存</button>
+            <div class="toolbar-group" style="margin-left: auto;">
+                <button id="btn-pdf">EXPORT PDF</button>
             </div>
         </header>
 
         <div id="settings-panel" class="hidden">
             <div class="settings-content">
                 <div class="settings-header">
-                    <h3>CSS設定</h3>
+                    <h3>CSS CONFIGURATION</h3>
                     <button id="btn-close-settings">&times;</button>
                 </div>
                 <div class="settings-body">
                     <div class="settings-group">
-                        <label for="css-presets">プリセット:</label>
+                        <label>PRESET:</label>
                         <select id="css-presets">
-                            <option value="default">デフォルト (GitHub風)</option>
-                            <option value="modern">モダン (Blue/Large)</option>
-                            <option value="classic">クラシック (新聞風)</option>
+                            <option value="default">DEFAULT (TECHNICAL)</option>
+                            <option value="modern">BLUEPRINT</option>
+                            <option value="classic">PAPER</option>
                         </select>
                     </div>
                     <div class="settings-group">
-                        <label for="custom-css-editor">カスタムCSS:</label>
-                        <textarea id="custom-css-editor" spellcheck="false" placeholder="ここにカスタムCSSを入力してください..."></textarea>
+                        <label>CUSTOM CSS:</label>
+                        <textarea id="custom-css-editor" spellcheck="false"></textarea>
                     </div>
                 </div>
             </div>
         </div>
         <main id="main-container">
             <div id="editor-container">
-                <textarea id="editor" spellcheck="false" placeholder="ここにMarkdownを記入してください..."></textarea>
+                <textarea id="editor" spellcheck="false" placeholder="READY >"></textarea>
             </div>
             <div id="preview-container">
                 <div id="preview" class="markdown-body"></div>

@@ -1,42 +1,45 @@
 :root {
-    --bg-color: #ffffff;
-    --text-color: #24292f;
-    --border-color: #d0d7de;
-    --toolbar-bg: #ffffff;
-    --editor-bg: #ffffff;
-    --preview-bg: #ffffff;
-    --hover-bg: #f6f8fa;
-    --active-bg: #ebecf0;
-    --btn-primary-bg: #0969da;
-    --btn-primary-hover: #0550ae;
-    --btn-success-bg: #2da44e;
-    --btn-success-hover: #2c974b;
-    --mermaid-bg: #fcfcfc;
-    --mermaid-border: #f0f0f0;
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --border-color: #333333;
+    --toolbar-bg: #1e1e1e;
+    --editor-bg: #121212;
+    --preview-bg: #1a1a1a;
+    --hover-bg: #2a2a2a;
+    --active-bg: #333333;
+    --btn-primary-bg: #444444;
+    --btn-primary-hover: #555555;
+    --btn-success-bg: #2e7d32;
+    --btn-success-hover: #388e3c;
+    --mermaid-bg: #1e1e1e;
+    --mermaid-border: #333333;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 }
 
-.dark-mode {
-    --bg-color: #0d1117;
-    --text-color: #c9d1d9;
-    --border-color: #30363d;
-    --toolbar-bg: #161b22;
-    --editor-bg: #0d1117;
-    --preview-bg: #0d1117;
-    --hover-bg: #21262d;
-    --active-bg: #282e33;
-    --mermaid-bg: #161b22;
-    --mermaid-border: #30363d;
+/* Light mode (still minimalist/technical) */
+.light-mode {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --border-color: #cccccc;
+    --toolbar-bg: #f0f0f0;
+    --editor-bg: #ffffff;
+    --preview-bg: #f9f9f9;
+    --hover-bg: #e0e0e0;
+    --active-bg: #d0d0d0;
+    --mermaid-bg: #ffffff;
+    --mermaid-border: #cccccc;
 }
 
 * {
     box-sizing: border-box;
+    border-radius: 0 !important; /* Force sharp corners */
 }
 
 body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-family: var(--font-mono);
     overflow: hidden;
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -51,38 +54,41 @@ body, html {
 #toolbar {
     background-color: var(--toolbar-bg);
     border-bottom: 1px solid var(--border-color);
-    padding: 12px 20px;
+    padding: 4px 10px;
     display: flex;
-    gap: 30px;
+    gap: 15px;
     align-items: center;
     flex-wrap: wrap;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    z-index: 10;
 }
 
 .toolbar-group {
     display: flex;
-    gap: 8px;
+    gap: 0; /* Tight grouping like CAD */
     align-items: center;
+    border: 1px solid var(--border-color);
 }
 
 button {
     background: var(--toolbar-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 8px 14px;
+    border: none;
+    border-right: 1px solid var(--border-color);
+    padding: 6px 10px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
     color: var(--text-color);
+    font-family: var(--font-mono);
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+    gap: 6px;
+    transition: background 0.1s;
+}
+
+button:last-child {
+    border-right: none;
 }
 
 button:hover {
     background-color: var(--hover-bg);
-    border-color: var(--border-color);
 }
 
 button:active {
@@ -92,36 +98,23 @@ button:active {
 #btn-pdf {
     background-color: var(--btn-success-bg);
     color: white;
-    border-color: rgba(27, 31, 36, 0.15);
-}
-
-#btn-pdf:hover {
-    background-color: var(--btn-success-hover);
 }
 
 select {
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    font-size: 14px;
+    padding: 5px;
+    border: none;
+    font-size: 12px;
     background-color: var(--bg-color);
     color: var(--text-color);
-}
-
-#btn-insert-mermaid {
-    background-color: var(--btn-primary-bg);
-    color: white;
-    border-color: rgba(27, 31, 36, 0.15);
-}
-
-#btn-insert-mermaid:hover {
-    background-color: var(--btn-primary-hover);
+    font-family: var(--font-mono);
+    outline: none;
 }
 
 #main-container {
     display: flex;
     flex: 1;
     overflow: hidden;
+    border-top: 1px solid var(--border-color);
 }
 
 #editor-container, #preview-container {
@@ -134,12 +127,12 @@ select {
 #editor {
     width: 100%;
     height: 100%;
-    padding: 20px;
+    padding: 15px;
     border: none;
     resize: none;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size: 16px;
-    line-height: 1.5;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
     outline: none;
     background-color: var(--editor-bg);
     color: var(--text-color);
@@ -155,84 +148,74 @@ select {
 }
 
 #preview {
-    padding: 20px 40px;
+    padding: 20px 30px;
 }
 
-/* Markdown styling (enhanced) */
+/* Technical Markdown Styling */
 .markdown-body {
     line-height: 1.6;
+    font-size: 14px;
 }
 
-.markdown-body h1, .markdown-body h2, .markdown-body h3,
-.markdown-body h4, .markdown-body h5, .markdown-body h6 {
-    margin-top: 24px;
-    margin-bottom: 16px;
-    font-weight: 600;
-    line-height: 1.25;
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-weight: normal;
+    border-bottom: 1px solid var(--border-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
-
-.markdown-body h1 { font-size: 2em; border-bottom: 1px solid var(--border-color); padding-bottom: .3em; }
-.markdown-body h2 { font-size: 1.5em; border-bottom: 1px solid var(--border-color); padding-bottom: .3em; }
 
 .markdown-body code {
-    background-color: rgba(175, 184, 193, 0.2);
-    padding: 0.2em 0.4em;
-    border-radius: 6px;
-    font-family: monospace;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 2px 4px;
+    border: 1px solid var(--border-color);
 }
 
 .markdown-body pre {
-    background-color: var(--hover-bg);
-    padding: 16px;
+    background-color: var(--bg-color);
+    padding: 12px;
     overflow: auto;
-    border-radius: 6px;
-}
-
-.markdown-body pre code {
-    background-color: transparent;
-    padding: 0;
-}
-
-.markdown-body img {
-    max-width: 100%;
+    border: 1px solid var(--border-color);
 }
 
 .markdown-body blockquote {
     padding: 0 1em;
-    color: #57606a;
-    border-left: 0.25em solid var(--border-color);
+    color: #888;
+    border-left: 2px solid var(--border-color);
     margin: 0;
 }
 
-/* Mermaid specific styling */
+/* Mermaid CAD Style */
 .mermaid {
     display: flex;
     justify-content: center;
     margin: 20px 0;
-    padding: 10px;
+    padding: 15px;
     background-color: var(--mermaid-bg);
-    border-radius: 8px;
     border: 1px solid var(--mermaid-border);
 }
 
-.mermaid-error {
-    color: #cf222e;
-    background-color: #ffebe9;
-    padding: 16px;
-    border-radius: 6px;
-    font-family: monospace;
-    margin: 10px 0;
-    white-space: pre-wrap;
+.mermaid-rendered svg {
+    filter: brightness(0.8) contrast(1.2); /* Technical look */
 }
 
-/* Settings Panel */
+.mermaid-error {
+    color: #ff5555;
+    background-color: #2a0000;
+    padding: 10px;
+    border: 1px solid #ff0000;
+    font-size: 12px;
+}
+
+/* Settings Overlay */
 #settings-panel {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.8);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -245,65 +228,55 @@ select {
 
 .settings-content {
     background-color: var(--bg-color);
-    width: 80%;
-    max-width: 600px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    width: 90%;
+    max-width: 700px;
+    border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
 }
 
 .settings-header {
-    padding: 16px 20px;
+    padding: 10px 15px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: var(--toolbar-bg);
 }
 
 .settings-header h3 {
     margin: 0;
+    font-size: 14px;
+    text-transform: uppercase;
 }
 
 #btn-close-settings {
     background: none;
     border: none;
-    font-size: 24px;
-    padding: 0;
-    cursor: pointer;
+    font-size: 18px;
     color: var(--text-color);
+    cursor: pointer;
 }
 
 .settings-body {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-}
-
-.settings-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.settings-group label {
-    font-weight: 600;
+    gap: 15px;
 }
 
 #custom-css-editor {
     width: 100%;
-    height: 200px;
-    font-family: monospace;
-    padding: 10px;
-    border-radius: 4px;
+    height: 300px;
+    background-color: #000;
+    color: #0f0; /* Terminal look for the CSS editor */
     border: 1px solid var(--border-color);
-    background-color: var(--editor-bg);
-    color: var(--text-color);
-    resize: vertical;
+    padding: 10px;
+    font-family: var(--font-mono);
 }
 
-/* Mobile adjustments */
+
+/* Mobile */
 @media (max-width: 768px) {
     #main-container {
         flex-direction: column;
