@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown WASM Editor</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Load markdown-wasm -->
+    <script src="https://cdn.jsdelivr.net/npm/markdown-wasm@1.2.0/dist/markdown.js"></script>
+    <!-- Load mermaid -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <!-- Load html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header id="toolbar">
+            <div class="toolbar-group">
+                <button title="太字 (Ctrl+B)" id="btn-bold"><i class="fas fa-bold"></i></button>
+                <button title="斜体 (Ctrl+I)" id="btn-italic"><i class="fas fa-italic"></i></button>
+                <button title="見出し" id="btn-header"><i class="fas fa-heading"></i></button>
+                <button title="リスト" id="btn-list"><i class="fas fa-list-ul"></i></button>
+                <button title="リンク" id="btn-link"><i class="fas fa-link"></i></button>
+                <button title="引用" id="btn-quote"><i class="fas fa-quote-left"></i></button>
+                <button title="コード" id="btn-code"><i class="fas fa-code"></i></button>
+            </div>
+            <div class="toolbar-group">
+                <select id="mermaid-presets">
+                    <option value="">Mermaid プリセットを選択...</option>
+                    <option value="flowchart">フローチャート</option>
+                    <option value="sequence">シーケンス図</option>
+                    <option value="gantt">ガントチャート</option>
+                    <option value="class">クラス図</option>
+                    <option value="state">状態遷移図</option>
+                    <option value="er">ER図</option>
+                    <option value="pie">パイチャート</option>
+                </select>
+                <button id="btn-insert-mermaid">挿入</button>
+            </div>
+            <div class="toolbar-group">
+                <button id="btn-pdf"><i class="fas fa-file-pdf"></i> PDFで保存</button>
+            </div>
+        </header>
+        <main id="main-container">
+            <div id="editor-container">
+                <textarea id="editor" spellcheck="false" placeholder="ここにMarkdownを記入してください..."></textarea>
+            </div>
+            <div id="preview-container">
+                <div id="preview" class="markdown-body"></div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
