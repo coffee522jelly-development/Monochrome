@@ -1,30 +1,41 @@
 // script.js
 const editor = document.getElementById('editor');
 const preview = document.getElementById('preview');
-
-// Initialize markdown-wasm
 let markdownParser;
+let mermaidCounter = 0;
+
+// Initialize Mermaid
+async function initMermaid() {
+    if (typeof mermaid === 'undefined') return;
+    const isDark = document.body.classList.contains('dark-mode');
+    mermaid.initialize({
+        startOnLoad: false,
+        theme: isDark ? 'dark' : 'default',
+        securityLevel: 'loose',
+        fontFamily: 'inherit',
+    });
+}
 
 // Update preview function
-function updatePreview() {
+async function updatePreview() {
     if (!markdownParser) return;
 
     const content = editor.value;
-    const html = markdownParser.parse(content);
-    preview.innerHTML = html;
+    if (!content) {
+        preview.innerHTML = '';
+        return;
+    }
 
-    // Handle Mermaid diagrams
-    renderMermaid();
-}
-
-// Initialize Mermaid
-function initMermaid(isDark = false) {
-    if (typeof mermaid !== 'undefined') {
-        mermaid.initialize({
-            startOnLoad: false,
-            theme: isDark ? 'dark' : 'default',
-            securityLevel: 'loose',
-        });
+    try {
+        // Some versions of markdown-wasm have issues with string inputs in certain environments
+        // Passing a Uint8Array can be more reliable.
+        const encoder = new TextEncoder();
+        const contentBytes = encoder.encode(content);
+        const html = markdownParser.parse(contentBytes);
+        preview.innerHTML = html;
+        await renderMermaid();
+    } catch (err) {
+        console.error('Markdown parse error:', err);
     }
 }
 
@@ -32,66 +43,86 @@ function initMermaid(isDark = false) {
 const btnTheme = document.getElementById('btn-theme');
 const themeIcon = btnTheme.querySelector('i');
 
-function setTheme(theme) {
+async function setTheme(theme) {
     if (theme === 'dark') {
         document.body.classList.add('dark-mode');
-        themeIcon.classList.replace('fa-moon', 'fa-sun');
+        if (themeIcon) themeIcon.classList.replace('fa-moon', 'fa-sun');
     } else {
         document.body.classList.remove('dark-mode');
-        themeIcon.classList.replace('fa-sun', 'fa-moon');
+        if (themeIcon) themeIcon.classList.replace('fa-sun', 'fa-moon');
     }
     localStorage.setItem('theme', theme);
-    // Re-initialize mermaid for theme change
-    initMermaid(theme === 'dark');
-    updatePreview();
+    await initMermaid();
+    await updatePreview();
 }
 
-// Init theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-if (typeof mermaid !== 'undefined') {
-    initMermaid(savedTheme === 'dark');
+// Load markdown-wasm
+async function loadMarkdownWasm() {
+    try {
+        if (window['markdown'] && window['markdown'].ready) {
+            markdownParser = await window['markdown'].ready;
+            await updatePreview();
+        } else if (window['markdown']) {
+            markdownParser = window['markdown'];
+            await updatePreview();
+        }
+    } catch (err) {
+        console.error('Failed to load markdown-wasm:', err);
+    }
 }
-setTheme(savedTheme);
+
+// Init everything
+const savedTheme = localStorage.getItem('theme') || 'light';
+initMermaid().then(() => {
+    setTheme(savedTheme);
+    loadMarkdownWasm();
+});
 
 btnTheme.addEventListener('click', () => {
     const isDark = document.body.classList.contains('dark-mode');
     setTheme(isDark ? 'light' : 'dark');
 });
 
-// Load markdown-wasm
-if (window['markdown'] && window['markdown'].ready) {
-    if (typeof window['markdown'].ready.then === 'function') {
-        window['markdown'].ready.then(m => {
-            markdownParser = m;
-            updatePreview();
-        });
-    } else {
-        markdownParser = window['markdown'];
-        updatePreview();
-    }
-}
-
-// Throttle for rendering
+// Throttle for Mermaid rendering
 let renderTimeout;
 
 async function renderMermaid() {
     clearTimeout(renderTimeout);
     renderTimeout = setTimeout(async () => {
         const mermaidBlocks = preview.querySelectorAll('pre > code.language-mermaid');
+        if (mermaidBlocks.length === 0) return;
+
         for (let i = 0; i < mermaidBlocks.length; i++) {
             const block = mermaidBlocks[i];
             const pre = block.parentElement;
-            const code = block.textContent;
-            const id = `mermaid-${Date.now()}-${i}`;
+            const code = block.textContent.trim();
+            const id = `mermaid-svg-${Date.now()}-${mermaidCounter++}`;
+
             try {
+                // Ensure we don't render the same block multiple times if not needed
+                const nextEl = pre.nextElementSibling;
+                if (nextEl && nextEl.classList.contains('mermaid-rendered')) {
+                    // Check if content changed (optional, here we just replace)
+                    nextEl.remove();
+                }
+
                 const { svg } = await mermaid.render(id, code);
-                pre.insertAdjacentHTML('afterend', svg);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'mermaid-rendered';
+                wrapper.innerHTML = svg;
                 pre.style.display = 'none';
+                pre.insertAdjacentElement('afterend', wrapper);
             } catch (err) {
                 console.error('Mermaid render error:', err);
+                pre.style.display = 'block';
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'mermaid-error';
                 errorDiv.textContent = 'Mermaid Error: ' + err.message;
+                // Avoid duplicate error messages
+                const nextEl = pre.nextElementSibling;
+                if (nextEl && nextEl.classList.contains('mermaid-error')) {
+                    nextEl.remove();
+                }
                 pre.insertAdjacentElement('afterend', errorDiv);
             }
         }
@@ -255,7 +286,9 @@ document.getElementById('btn-pdf').addEventListener('click', () => {
         html2canvas:  { scale: 2 },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
-    html2pdf().set(opt).from(element).save();
+    if (typeof html2pdf !== 'undefined') {
+        html2pdf().set(opt).from(element).save();
+    }
 });
 
 // Scroll synchronization
