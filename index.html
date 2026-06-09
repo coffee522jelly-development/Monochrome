@@ -6,6 +6,7 @@
     <title>Markdown WASM Editor</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style id="user-custom-css"></style>
     <!-- Load markdown-wasm -->
     <script src="https://cdn.jsdelivr.net/npm/markdown-wasm@1.2.0/dist/markdown.js"></script>
     <!-- Load mermaid -->
@@ -39,9 +40,36 @@
                 <button id="btn-insert-mermaid">挿入</button>
             </div>
             <div class="toolbar-group">
+                <button title="テーマ切り替え" id="btn-theme"><i class="fas fa-moon"></i></button>
+                <button title="CSS設定" id="btn-settings"><i class="fas fa-cog"></i></button>
+            </div>
+            <div class="toolbar-group">
                 <button id="btn-pdf"><i class="fas fa-file-pdf"></i> PDFで保存</button>
             </div>
         </header>
+
+        <div id="settings-panel" class="hidden">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h3>CSS設定</h3>
+                    <button id="btn-close-settings">&times;</button>
+                </div>
+                <div class="settings-body">
+                    <div class="settings-group">
+                        <label for="css-presets">プリセット:</label>
+                        <select id="css-presets">
+                            <option value="default">デフォルト (GitHub風)</option>
+                            <option value="modern">モダン (Blue/Large)</option>
+                            <option value="classic">クラシック (新聞風)</option>
+                        </select>
+                    </div>
+                    <div class="settings-group">
+                        <label for="custom-css-editor">カスタムCSS:</label>
+                        <textarea id="custom-css-editor" spellcheck="false" placeholder="ここにカスタムCSSを入力してください..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
         <main id="main-container">
             <div id="editor-container">
                 <textarea id="editor" spellcheck="false" placeholder="ここにMarkdownを記入してください..."></textarea>

@@ -2,31 +2,8 @@
 const editor = document.getElementById('editor');
 const preview = document.getElementById('preview');
 
-// Initialize Mermaid
-mermaid.initialize({
-    startOnLoad: false,
-    theme: 'default',
-    securityLevel: 'loose',
-});
-
 // Initialize markdown-wasm
 let markdownParser;
-// Use await if ready is a promise, or check how it's exposed
-if (window['markdown'] && window['markdown'].ready) {
-    if (typeof window['markdown'].ready.then === 'function') {
-        window['markdown'].ready.then(m => {
-            markdownParser = m;
-            updatePreview();
-        });
-    } else {
-        // If it's not a promise, maybe it's already ready or has another way
-        markdownParser = window['markdown'];
-        updatePreview();
-    }
-}
-
-// Throttle for rendering
-let renderTimeout;
 
 // Update preview function
 function updatePreview() {
@@ -40,25 +17,76 @@ function updatePreview() {
     renderMermaid();
 }
 
+// Initialize Mermaid
+function initMermaid(isDark = false) {
+    if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: isDark ? 'dark' : 'default',
+            securityLevel: 'loose',
+        });
+    }
+}
+
+// Theme switching
+const btnTheme = document.getElementById('btn-theme');
+const themeIcon = btnTheme.querySelector('i');
+
+function setTheme(theme) {
+    if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+    } else {
+        document.body.classList.remove('dark-mode');
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+    }
+    localStorage.setItem('theme', theme);
+    // Re-initialize mermaid for theme change
+    initMermaid(theme === 'dark');
+    updatePreview();
+}
+
+// Init theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+if (typeof mermaid !== 'undefined') {
+    initMermaid(savedTheme === 'dark');
+}
+setTheme(savedTheme);
+
+btnTheme.addEventListener('click', () => {
+    const isDark = document.body.classList.contains('dark-mode');
+    setTheme(isDark ? 'light' : 'dark');
+});
+
+// Load markdown-wasm
+if (window['markdown'] && window['markdown'].ready) {
+    if (typeof window['markdown'].ready.then === 'function') {
+        window['markdown'].ready.then(m => {
+            markdownParser = m;
+            updatePreview();
+        });
+    } else {
+        markdownParser = window['markdown'];
+        updatePreview();
+    }
+}
+
+// Throttle for rendering
+let renderTimeout;
+
 async function renderMermaid() {
     clearTimeout(renderTimeout);
     renderTimeout = setTimeout(async () => {
-        // Find code blocks with class "language-mermaid"
         const mermaidBlocks = preview.querySelectorAll('pre > code.language-mermaid');
-
         for (let i = 0; i < mermaidBlocks.length; i++) {
             const block = mermaidBlocks[i];
             const pre = block.parentElement;
             const code = block.textContent;
-
-            // Create a unique ID for mermaid to render
             const id = `mermaid-${Date.now()}-${i}`;
-
             try {
-                // Render mermaid
                 const { svg } = await mermaid.render(id, code);
                 pre.insertAdjacentHTML('afterend', svg);
-                pre.style.display = 'none'; // Hide the original code block
+                pre.style.display = 'none';
             } catch (err) {
                 console.error('Mermaid render error:', err);
                 const errorDiv = document.createElement('div');
@@ -77,14 +105,10 @@ function insertAtCursor(before, after = '') {
     const text = editor.value;
     const selection = text.substring(start, end);
     const replacement = before + selection + after;
-
     editor.value = text.substring(0, start) + replacement + text.substring(end);
-
-    // Set cursor position
     editor.focus();
     const newCursorPos = start + before.length + selection.length + after.length;
     editor.setSelectionRange(newCursorPos, newCursorPos);
-
     updatePreview();
 }
 
@@ -96,6 +120,87 @@ document.getElementById('btn-list').addEventListener('click', () => insertAtCurs
 document.getElementById('btn-link').addEventListener('click', () => insertAtCursor('[', '](url)'));
 document.getElementById('btn-quote').addEventListener('click', () => insertAtCursor('> ', ''));
 document.getElementById('btn-code').addEventListener('click', () => insertAtCursor('`', '`'));
+
+// Settings panel
+const settingsPanel = document.getElementById('settings-panel');
+const btnSettings = document.getElementById('btn-settings');
+const btnCloseSettings = document.getElementById('btn-close-settings');
+const customCssEditor = document.getElementById('custom-css-editor');
+const cssPresets = document.getElementById('css-presets');
+const styleTag = document.getElementById('user-custom-css');
+
+btnSettings.addEventListener('click', () => {
+    settingsPanel.classList.remove('hidden');
+});
+
+btnCloseSettings.addEventListener('click', () => {
+    settingsPanel.classList.add('hidden');
+});
+
+settingsPanel.addEventListener('click', (e) => {
+    if (e.target === settingsPanel) {
+        settingsPanel.classList.add('hidden');
+    }
+});
+
+function applyCustomCss(css) {
+    styleTag.textContent = css;
+    localStorage.setItem('customCss', css);
+}
+
+customCssEditor.addEventListener('input', (e) => {
+    applyCustomCss(e.target.value);
+});
+
+const cssPresetStyles = {
+    default: '',
+    modern: `.markdown-body {
+    font-family: 'Inter', sans-serif;
+    color: #1a202c;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.markdown-body h1 {
+    color: #2b6cb0;
+    font-size: 2.5em;
+    border-bottom: 2px solid #ebf8ff;
+}
+.markdown-body p {
+    font-size: 1.1em;
+    line-height: 1.8;
+}`,
+    classic: `.markdown-body {
+    font-family: 'Georgia', serif;
+    color: #111;
+    line-height: 1.4;
+    column-count: 1;
+}
+.markdown-body h1 {
+    text-align: center;
+    border-bottom: 3px double #000;
+    text-transform: uppercase;
+}
+.markdown-body blockquote {
+    font-style: italic;
+    border-left: none;
+    text-align: center;
+    padding: 20px;
+}`
+};
+
+cssPresets.addEventListener('change', (e) => {
+    const preset = e.target.value;
+    if (preset in cssPresetStyles) {
+        customCssEditor.value = cssPresetStyles[preset];
+        applyCustomCss(cssPresetStyles[preset]);
+    }
+});
+
+const savedCss = localStorage.getItem('customCss');
+if (savedCss) {
+    customCssEditor.value = savedCss;
+    applyCustomCss(savedCss);
+}
 
 // Mermaid presets
 const mermaidTemplates = {
@@ -118,7 +223,6 @@ document.getElementById('btn-insert-mermaid').addEventListener('click', () => {
 
 // Editor enhancements
 editor.addEventListener('keydown', (e) => {
-    // Tab key
     if (e.key === 'Tab') {
         e.preventDefault();
         const start = editor.selectionStart;
@@ -127,8 +231,6 @@ editor.addEventListener('keydown', (e) => {
         editor.selectionStart = editor.selectionEnd = start + 4;
         updatePreview();
     }
-
-    // Keyboard shortcuts
     if (e.ctrlKey || e.metaKey) {
         if (e.key === 'b') {
             e.preventDefault();
@@ -153,8 +255,6 @@ document.getElementById('btn-pdf').addEventListener('click', () => {
         html2canvas:  { scale: 2 },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
-
-    // New Promise-based usage:
     html2pdf().set(opt).from(element).save();
 });
 
@@ -182,7 +282,6 @@ document.getElementById('preview-container').addEventListener('scroll', (e) => {
     editor.scrollTop = scrollPercentage * (editor.scrollHeight - editor.clientHeight);
 });
 
-// Event listener for real-time parsing
 editor.addEventListener('input', () => {
     updatePreview();
 });
