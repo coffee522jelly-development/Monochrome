@@ -135,7 +135,7 @@ optgroup {
     width: 100%;
     height: 100%;
     padding: 15px;
-    border: none;
+    border: 2px solid transparent; /* Prepare for drag-active border */
     resize: none;
     font-family: var(--font-mono);
     font-size: 14px;
@@ -143,6 +143,12 @@ optgroup {
     outline: none;
     background-color: var(--editor-bg);
     color: var(--text-color);
+    transition: border-color 0.2s;
+}
+
+#editor.drag-active {
+    border-color: var(--btn-success-bg);
+    background-color: var(--hover-bg);
 }
 
 #editor-container {

@@ -415,3 +415,37 @@ document.getElementById('preview-container').addEventListener('scroll', (e) => {
 });
 
 editor.addEventListener('input', () => updatePreview());
+
+// Image drag and drop
+editor.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    editor.classList.add('drag-active');
+});
+
+editor.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    editor.classList.remove('drag-active');
+});
+
+editor.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    editor.classList.remove('drag-active');
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const base64Data = event.target.result;
+                    const imageMarkdown = `\n![${file.name}](${base64Data})\n`;
+                    insertAtCursor(imageMarkdown);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
