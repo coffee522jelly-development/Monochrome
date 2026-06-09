@@ -303,34 +303,57 @@ if (savedCss && customCssEditor) {
 // Mermaid templates
 const mermaidTemplates = {
     flowchart: 'graph TD\n    A[START] --> B{CHECK}\n    B -- YES --> C[OK]\n    B -- NO --> D[ERR]',
-    sequence: 'sequenceDiagram\n    USR->>SYS: REQ\n    SYS-->>USR: RSP',
-    gantt: 'gantt\n    section S1\n    T1: 2023-01-01, 10d',
-    class: 'classDiagram\n    C1 <|-- C2',
-    state: 'stateDiagram-v2\n    S1 --> S2',
-    er: 'erDiagram\n    E1 ||--o{ E2 : R1',
-    pie: 'pie title T1\n    "V1" : 50\n    "V2" : 50'
+    sequence: 'sequenceDiagram\n    Alice->>Bob: Hello Bob, how are you?\n    Bob-->>Alice: Jolly good!',
+    gantt: 'gantt\n    title A Gantt Diagram\n    section Section\n    A task           :a1, 2023-01-01, 30d\n    Another task     :after a1  , 20d',
+    class: 'classDiagram\n    Animal <|-- Duck\n    Animal <|-- Fish\n    Animal <|-- Zebra\n    class Animal{\n        +int age\n        +String gender\n        +isMammal()\n        +mate()\n    }',
+    state: 'stateDiagram-v2\n    [*] --> Still\n    Still --> [*]\n    Still --> Moving\n    Moving --> Still\n    Moving --> Crash\n    Crash --> [*]',
+    er: 'erDiagram\n    CUSTOMER ||--o{ ORDER : places\n    ORDER ||--|{ LINE-ITEM : contains\n    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses',
+    pie: 'pie title Pets adopted by volunteers\n    "Dogs" : 386\n    "Cats" : 85\n    "Rats" : 15',
+    journey: 'journey\n    title My working day\n    section Go to work\n      Make tea: 5: Me\n      Go upstairs: 3: Me\n      Do work: 1: Me, Cat\n    section Go home\n      Go downstairs: 5: Me\n      Sit down: 5: Me',
+    git: 'gitGraph\n    commit\n    commit\n    branch develop\n    checkout develop\n    commit\n    commit\n    checkout main\n    merge develop\n    commit',
+    mindmap: 'mindmap\n  root((mindmap))\n    Origins\n      Long history\n      ::icon(fa fa-book)\n      Popularisation\n        British popular psychology author Tony Buzan\n    Research\n      On effectiveness and features\n      On Oveview and Detail\n    Tools\n      Pen and paper\n      Mermaid',
+    timeline: 'timeline\n    title History of Social Media Platform\n    2002 : LinkedIn\n    2004 : Facebook : Google\n    2005 : Youtube\n    2006 : Twitter',
+    quadrant: 'quadrantChart\n    title Reach and engagement of campaigns\n    x-axis Low Reach --> High Reach\n    y-axis Low Engagement --> High Engagement\n    quadrant-1 We should expand\n    quadrant-2 Need to promote\n    quadrant-3 Re-evaluate\n    quadrant-4 May be improved\n    Campaign A: [0.3, 0.6]\n    Campaign B: [0.45, 0.23]\n    Campaign C: [0.57, 0.69]\n    Campaign D: [0.78, 0.34]\n    Campaign E: [0.40, 0.34]\n    Campaign F: [0.58, 0.14]'
 };
 
-const btnInsertMermaid = document.getElementById('btn-insert-mermaid');
+// Markdown templates
+const markdownTemplates = {
+    checklist_3: '- [ ] Item 1\n- [ ] Item 2\n- [ ] Item 3',
+    checklist_5: '- [ ] Item 1\n- [ ] Item 2\n- [ ] Item 3\n- [ ] Item 4\n- [ ] Item 5',
+    bullet_3: '- Item 1\n- Item 2\n- Item 3',
+    bullet_nested: '- Parent 1\n    - Child 1.1\n    - Child 1.2\n- Parent 2\n    - Child 2.1',
+    table_3x3: '| Header 1 | Header 2 | Header 3 |\n| --- | --- | --- |\n| Cell 1-1 | Cell 1-2 | Cell 1-3 |\n| Cell 2-1 | Cell 2-2 | Cell 2-3 |\n| Cell 3-1 | Cell 3-2 | Cell 3-3 |',
+    table_5x5: '| H1 | H2 | H3 | H4 | H5 |\n| --- | --- | --- | --- | --- |\n| C1-1 | C1-2 | C1-3 | C1-4 | C1-5 |\n| C2-1 | C2-2 | C2-3 | C2-4 | C2-5 |\n| C3-1 | C3-2 | C3-3 | C3-4 | C3-5 |\n| C4-1 | C4-2 | C4-3 | C4-4 | C4-5 |\n| C5-1 | C5-2 | C5-3 | C5-4 | C5-5 |',
+    table_header_only: '| Header 1 | Header 2 |\n| --- | --- |',
+    hr: '\n---\n',
+    math: '$$\nL = \\frac{1}{2} \\rho v^2 S C_L\n$$',
+    callout_info: '> [!INFO]\n> This is an informational callout.',
+    callout_warn: '> [!WARNING]\n> This is a warning callout.',
+    details: '<details>\n<summary>Click to expand</summary>\n\nContent here...\n</details>'
+};
+
 const mermaidPresets = document.getElementById('mermaid-presets');
+const mdPresets = document.getElementById('md-presets');
 
 function handleMermaidSelection() {
     const preset = mermaidPresets.value;
     if (preset && mermaidTemplates[preset]) {
         const template = `\n\`\`\`mermaid\n${mermaidTemplates[preset]}\n\`\`\`\n`;
         insertAtCursor(template);
-        // Reset select for subsequent selection of the same item
         mermaidPresets.value = "";
     }
 }
 
-if (btnInsertMermaid) {
-    btnInsertMermaid.addEventListener('click', handleMermaidSelection);
+function handleMdSelection() {
+    const preset = mdPresets.value;
+    if (preset && markdownTemplates[preset]) {
+        insertAtCursor(markdownTemplates[preset]);
+        mdPresets.value = "";
+    }
 }
 
-if (mermaidPresets) {
-    mermaidPresets.addEventListener('change', handleMermaidSelection);
-}
+if (mermaidPresets) mermaidPresets.addEventListener('change', handleMermaidSelection);
+if (mdPresets) mdPresets.addEventListener('change', handleMdSelection);
 
 // Editor enhancements
 editor.addEventListener('keydown', (e) => {
