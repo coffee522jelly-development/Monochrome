@@ -127,9 +127,28 @@ async function loadMarkdownWasm() {
 
 // Init everything
 const savedTheme = localStorage.getItem('theme') || 'dark';
+const savedContent = localStorage.getItem('editorContent');
+const savedAssets = localStorage.getItem('assetStore');
+
+if (savedContent) {
+    editor.value = savedContent;
+}
+
+if (savedAssets) {
+    try {
+        const parsed = JSON.parse(savedAssets);
+        Object.entries(parsed).forEach(([id, data]) => {
+            AssetStore.assets.set(id, data);
+            const num = parseInt(id.replace('img-', ''));
+            if (num >= AssetStore.nextId) AssetStore.nextId = num + 1;
+        });
+    } catch (e) { console.error("Asset restore error", e); }
+}
+
 initMermaid().then(() => {
     setTheme(savedTheme);
     loadMarkdownWasm();
+    updateStats();
 });
 
 if (btnTheme) {
@@ -617,7 +636,83 @@ document.getElementById('preview-container').addEventListener('scroll', (e) => {
     editor.scrollTop = scrollPercentage * (editor.scrollHeight - editor.clientHeight);
 });
 
-editor.addEventListener('input', () => updatePreview());
+editor.addEventListener('input', () => {
+    updatePreview();
+    updateStats();
+    autoSave();
+});
+
+// Auto-save logic
+let saveTimeout;
+function autoSave() {
+    const saveStatus = document.getElementById('save-status');
+    saveStatus.textContent = "SAVING...";
+    saveStatus.style.opacity = "1";
+
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+        localStorage.setItem('editorContent', editor.value);
+        const assetObj = {};
+        AssetStore.assets.forEach((v, k) => assetObj[k] = v);
+        localStorage.setItem('assetStore', JSON.stringify(assetObj));
+
+        saveStatus.textContent = "SAVED";
+        saveStatus.style.opacity = "0.7";
+    }, 1000);
+}
+
+// Stats logic
+function updateStats() {
+    const text = editor.value;
+    const lines = text ? text.split('\n').length : 0;
+    const words = text ? text.trim().split(/\s+/).filter(w => w.length > 0).length : 0;
+    const chars = text.length;
+
+    document.getElementById('stat-lines').textContent = lines;
+    document.getElementById('stat-words').textContent = words;
+    document.getElementById('stat-chars').textContent = chars;
+}
+
+// TOC logic
+const btnToc = document.getElementById('btn-toc');
+if (btnToc) {
+    btnToc.addEventListener('click', () => {
+        const text = editor.value;
+        const lines = text.split('\n');
+        let toc = "\n## 目次\n\n";
+        let count = 0;
+
+        lines.forEach(line => {
+            const match = line.match(/^(#{2,4})\s+(.+)$/);
+            if (match) {
+                const level = match[1].length - 2;
+                const title = match[2];
+                const anchor = title.toLowerCase().replace(/[^\w\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf]+/g, '-');
+                toc += "  ".repeat(level) + `- [${title}](#${anchor})\n`;
+                count++;
+            }
+        });
+
+        if (count > 0) {
+            insertAtCursor(toc + "\n");
+        } else {
+            alert("目次を作成するには、## 以上の見出しが必要です。");
+        }
+    });
+}
+
+// Help Overlay logic
+const btnHelp = document.getElementById('btn-help');
+const helpOverlay = document.getElementById('help-overlay');
+const btnCloseHelp = document.getElementById('btn-close-help');
+
+if (btnHelp) btnHelp.addEventListener('click', () => helpOverlay.classList.remove('hidden'));
+if (btnCloseHelp) btnCloseHelp.addEventListener('click', () => helpOverlay.classList.add('hidden'));
+if (helpOverlay) {
+    helpOverlay.addEventListener('click', (e) => {
+        if (e.target === helpOverlay) helpOverlay.classList.add('hidden');
+    });
+}
 
 // Image drag and drop
 function handleDrop(e) {
@@ -638,10 +733,41 @@ function handleDrop(e) {
                     insertAtCursor(imageMarkdown);
                 };
                 reader.readAsDataURL(file);
+            } else if (file.name.endsWith('.md')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    editor.value = event.target.result;
+                    updatePreview();
+                    updateStats();
+                    autoSave();
+                };
+                reader.readAsText(file);
             }
         });
     }
 }
+
+// Auto-pairing
+const pairs = {
+    '"': '"',
+    "'": "'",
+    '(': ')',
+    '[': ']',
+    '{': '}',
+    '`': '`'
+};
+
+editor.addEventListener('keydown', (e) => {
+    if (pairs[e.key]) {
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        if (start !== end) {
+            e.preventDefault();
+            const selection = editor.value.substring(start, end);
+            insertAtCursor(e.key, pairs[e.key]);
+        }
+    }
+});
 
 editor.addEventListener('dragover', (e) => { e.preventDefault(); editor.classList.add('drag-active'); });
 editor.addEventListener('dragleave', () => { editor.classList.remove('drag-active'); });

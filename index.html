@@ -64,6 +64,9 @@
                 </select>
             </div>
             <div class="toolbar-group">
+                <button title="目次作成" id="btn-toc"><i class="fas fa-list-ol"></i> TOC</button>
+            </div>
+            <div class="toolbar-group">
                 <button title="THEME" id="btn-theme"><i class="fas fa-adjust"></i></button>
                 <button title="CSS" id="btn-settings"><i class="fas fa-code"></i></button>
             </div>
@@ -131,6 +134,34 @@
                 </div>
             </aside>
         </main>
+        <footer id="status-bar">
+            <div class="status-item"><span id="stat-lines">0</span> LINES</div>
+            <div class="status-item"><span id="stat-words">0</span> WORDS</div>
+            <div class="status-item"><span id="stat-chars">0</span> CHARS</div>
+            <div class="status-spacer"></div>
+            <div class="status-item" id="save-status">SAVED</div>
+            <div class="status-item" id="btn-help" style="cursor:pointer; border-left: 1px solid var(--border-color); padding-left: 10px;" title="ショートカットを表示">
+                <i class="fas fa-question-circle"></i> HELP
+            </div>
+        </footer>
+    </div>
+    <div id="help-overlay" class="hidden">
+        <div class="help-content">
+            <div class="help-header">
+                <h3>KEYBOARD SHORTCUTS</h3>
+                <button id="btn-close-help">&times;</button>
+            </div>
+            <div class="help-body">
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>B</kbd> <span>Bold</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>I</kbd> <span>Italic</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>Z</kbd> <span>Undo</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>Y</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd> <span>Redo</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>S</kbd> <span>Export PDF</span></div>
+                <div class="help-item"><kbd>Tab</kbd> <span>Insert 4 spaces</span></div>
+                <div class="help-item"><kbd>Drop MD File</kbd> <span>Import Markdown</span></div>
+                <div class="help-item"><kbd>Drop Image</kbd> <span>Import Image</span></div>
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
