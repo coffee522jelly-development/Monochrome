@@ -390,19 +390,9 @@ if (settingsPanel) {
     });
 }
 
-function applyCustomCss(css) {
-    styleTag.textContent = css;
-    localStorage.setItem('customCss', css);
-}
-
-if (customCssEditor) {
-    customCssEditor.addEventListener('input', (e) => {
-        applyCustomCss(e.target.value);
-    });
-}
-
+// CSS Preset Management
 const cssPresetStyles = {
-    default: `/* TECHNICAL (CAD) */
+    'sys:technical': `/* TECHNICAL (CAD) */
 .markdown-body {
     font-family: 'JetBrains Mono', monospace;
     color: var(--text-color);
@@ -430,7 +420,7 @@ const cssPresetStyles = {
     accent-color: var(--btn-success-bg);
     margin-right: 8px;
 }`,
-    modern: `/* BLUEPRINT (ENGINEERING) */
+    'sys:blueprint': `/* BLUEPRINT (ENGINEERING) */
 .markdown-body {
     font-family: 'Segoe UI', system-ui, sans-serif;
     color: #a0c4ff;
@@ -456,7 +446,7 @@ const cssPresetStyles = {
     height: 18px;
     cursor: crosshair;
 }`,
-    classic: `/* DOCUMENT (REPORT) */
+    'sys:paper': `/* DOCUMENT (REPORT) */
 .markdown-body {
     font-family: 'Georgia', serif;
     color: #1a1a1a;
@@ -485,20 +475,118 @@ const cssPresetStyles = {
 }`
 };
 
+const CSSStore = {
+    userPresets: {},
+    load() {
+        const saved = localStorage.getItem('userCssPresets');
+        if (saved) this.userPresets = JSON.parse(saved);
+        this.refreshDropdown();
+    },
+    save(name, css) {
+        this.userPresets[name] = css;
+        localStorage.setItem('userCssPresets', JSON.stringify(this.userPresets));
+        this.refreshDropdown();
+    },
+    delete(name) {
+        delete this.userPresets[name];
+        localStorage.setItem('userCssPresets', JSON.stringify(this.userPresets));
+        this.refreshDropdown();
+    },
+    refreshDropdown() {
+        const dropdown = document.getElementById('css-presets');
+        // Clear user-defined options (anything after the disabled separator)
+        let foundSeparator = false;
+        Array.from(dropdown.options).forEach(opt => {
+            if (opt.disabled && opt.textContent.includes('ユーザー定義')) {
+                foundSeparator = true;
+                return;
+            }
+            if (foundSeparator) dropdown.removeChild(opt);
+        });
+
+        // Add user presets
+        Object.keys(this.userPresets).forEach(name => {
+            const opt = document.createElement('option');
+            opt.value = `user:${name}`;
+            opt.textContent = name;
+            dropdown.appendChild(opt);
+        });
+    }
+};
+
+function applyCustomCss(css) {
+    styleTag.textContent = css;
+    localStorage.setItem('customCss', css);
+}
+
+if (customCssEditor) {
+    customCssEditor.addEventListener('input', (e) => {
+        applyCustomCss(e.target.value);
+    });
+}
+
 if (cssPresets) {
     cssPresets.addEventListener('change', (e) => {
-        const preset = e.target.value;
-        if (preset in cssPresetStyles) {
-            customCssEditor.value = cssPresetStyles[preset];
-            applyCustomCss(cssPresetStyles[preset]);
+        const val = e.target.value;
+        let css = "";
+        if (val.startsWith('sys:')) {
+            css = cssPresetStyles[val];
+        } else if (val.startsWith('user:')) {
+            const name = val.replace('user:', '');
+            css = CSSStore.userPresets[name];
+        }
+
+        if (css) {
+            customCssEditor.value = css;
+            applyCustomCss(css);
+            localStorage.setItem('lastCssPreset', val);
         }
     });
 }
 
+const btnSaveCss = document.getElementById('btn-save-preset');
+if (btnSaveCss) {
+    btnSaveCss.addEventListener('click', () => {
+        const name = document.getElementById('preset-name').value.trim();
+        if (!name) { alert("プリセット名を入力してください。"); return; }
+        const css = customCssEditor.value;
+        CSSStore.save(name, css);
+        document.getElementById('css-presets').value = `user:${name}`;
+        localStorage.setItem('lastCssPreset', `user:${name}`);
+        alert(`プリセット "${name}" を保存しました。`);
+    });
+}
+
+const btnDeleteCss = document.getElementById('btn-delete-preset');
+if (btnDeleteCss) {
+    btnDeleteCss.addEventListener('click', () => {
+        const val = document.getElementById('css-presets').value;
+        if (!val.startsWith('user:')) { alert("システム標準プリセットは削除できません。"); return; }
+        const name = val.replace('user:', '');
+        if (confirm(`プリセット "${name}" を削除しますか？`)) {
+            CSSStore.delete(name);
+            document.getElementById('css-presets').value = "sys:technical";
+            document.getElementById('css-presets').dispatchEvent(new Event('change'));
+        }
+    });
+}
+
+// Initial load
+CSSStore.load();
+const lastPreset = localStorage.getItem('lastCssPreset') || 'sys:technical';
 const savedCss = localStorage.getItem('customCss');
-if (savedCss && customCssEditor) {
+
+if (savedCss) {
     customCssEditor.value = savedCss;
     applyCustomCss(savedCss);
+    // Try to match dropdown to last preset
+    if (document.querySelector(`#css-presets option[value="${lastPreset}"]`)) {
+        document.getElementById('css-presets').value = lastPreset;
+    }
+} else {
+    // Default to technical if no saved CSS
+    document.getElementById('css-presets').value = 'sys:technical';
+    document.getElementById('css-presets').dispatchEvent(new Event('change'));
 }
 
 // Mermaid templates

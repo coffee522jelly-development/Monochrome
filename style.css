@@ -405,6 +405,21 @@ input[type="range"] {
     gap: 15px;
 }
 
+.preset-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.settings-group input[type="text"] {
+    flex: 1;
+    background-color: #000;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 6px 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
 #custom-css-editor {
     width: 100%;
     height: 300px;

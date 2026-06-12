@@ -84,16 +84,28 @@
                 </div>
                 <div class="settings-body">
                     <div class="settings-group">
-                        <label>PRESET:</label>
-                        <select id="css-presets">
-                            <option value="default">DEFAULT (TECHNICAL)</option>
-                            <option value="modern">BLUEPRINT</option>
-                            <option value="classic">PAPER</option>
-                        </select>
+                        <label>CSS PRESETS</label>
+                        <div class="preset-controls">
+                            <select id="css-presets" style="flex: 1;">
+                                <option value="default">--- システム標準 ---</option>
+                                <option value="sys:technical">TECHNICAL (CAD)</option>
+                                <option value="sys:blueprint">BLUEPRINT</option>
+                                <option value="sys:paper">PAPER (REPORT)</option>
+                                <option disabled>--- ユーザー定義 ---</option>
+                            </select>
+                            <button id="btn-delete-preset" title="プリセットを削除" style="background: #a00; color: white;"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="settings-group" style="margin-top: 10px;">
+                        <label>SAVE AS NEW PRESET</label>
+                        <div class="preset-controls">
+                            <input type="text" id="preset-name" placeholder="プリセット名を入力...">
+                            <button id="btn-save-preset" style="background: var(--btn-success-bg); color: white;"><i class="fas fa-save"></i> SAVE</button>
+                        </div>
                     </div>
                     <div class="settings-group">
-                        <label>CUSTOM CSS:</label>
-                        <textarea id="custom-css-editor" spellcheck="false"></textarea>
+                        <label>CSS EDITOR</label>
+                        <textarea id="custom-css-editor" spellcheck="false" placeholder="/* CSSを入力してください */"></textarea>
                     </div>
                 </div>
             </div>
