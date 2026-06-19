@@ -394,7 +394,7 @@ if (settingsPanel) {
 const cssPresetStyles = {
     'sys:technical': `/* TECHNICAL (CAD) */
 .markdown-body {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--preview-font);
     color: var(--text-color);
 }
 .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 {
@@ -422,7 +422,7 @@ const cssPresetStyles = {
 }`,
     'sys:blueprint': `/* BLUEPRINT (ENGINEERING) */
 .markdown-body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: var(--preview-font);
     color: #a0c4ff;
     background-color: #001524;
 }
@@ -448,7 +448,7 @@ const cssPresetStyles = {
 }`,
     'sys:paper': `/* DOCUMENT (REPORT) */
 .markdown-body {
-    font-family: 'Georgia', serif;
+    font-family: var(--preview-font);
     color: #1a1a1a;
     background-color: #fdfdfd;
     padding: 40px !important;
@@ -472,6 +472,116 @@ const cssPresetStyles = {
 .markdown-body input[type="checkbox"] {
     transform: scale(1.2);
     vertical-align: middle;
+}`,
+    'sys:minimal': `/* CLEAN MINIMAL */
+.markdown-body {
+    font-family: var(--preview-font);
+    max-width: 800px;
+    margin: 0 auto;
+    color: #333;
+    background: #fff;
+    line-height: 2;
+}
+.markdown-body h1, .markdown-body h2 {
+    font-weight: 300;
+    border: none;
+    text-align: center;
+}
+.markdown-body blockquote {
+    border: none;
+    font-style: italic;
+    text-align: center;
+    color: #999;
+}`,
+    'sys:terminal': `/* RETRO TERMINAL */
+.markdown-body {
+    font-family: var(--preview-font);
+    background: #0a0a0a;
+    color: #0f0;
+    text-shadow: 0 0 5px #0f0;
+}
+.markdown-body h1, .markdown-body h2 {
+    color: #0f0;
+    border-color: #0f0;
+    text-transform: uppercase;
+}
+.markdown-body code {
+    background: #000;
+    color: #0f0;
+    border: 1px solid #0f0;
+}`,
+    'sys:cyberpunk': `/* NEON CYBERPUNK */
+.markdown-body {
+    font-family: var(--preview-font);
+    background: #0d0221;
+    color: #00ffcc;
+}
+.markdown-body h1 {
+    color: #ff00ff;
+    text-shadow: 2px 2px #00ffff;
+    border-bottom: 3px double #ff00ff;
+}
+.markdown-body blockquote {
+    background: #1a1a2e;
+    border-left: 5px solid #e94560;
+    color: #e94560;
+}`,
+    'sys:solarized': `/* SOLARIZED DARK */
+.markdown-body {
+    font-family: var(--preview-font);
+    background: #002b36;
+    color: #839496;
+}
+.markdown-body h1, .markdown-body h2 {
+    color: #268bd2;
+    border-bottom-color: #586e75;
+}
+.markdown-body a { color: #2aa198; }
+.markdown-body code { background: #073642; }`,
+    'sys:academia': `/* DARK ACADEMIA */
+.markdown-body {
+    font-family: var(--preview-font);
+    background: #1c1917;
+    color: #d6d3d1;
+    line-height: 1.8;
+}
+.markdown-body h1, .markdown-body h2 {
+    font-family: serif;
+    color: #a8a29e;
+    border-bottom-color: #444;
+}
+.markdown-body blockquote {
+    border-color: #78716c;
+    font-style: italic;
+}`,
+    'sys:neon': `/* NEON NIGHT */
+.markdown-body {
+    font-family: var(--preview-font);
+    background: #000;
+    color: #fff;
+}
+.markdown-body h1 {
+    color: #fff;
+    text-shadow: 0 0 10px #fff, 0 0 20px #f0f, 0 0 30px #f0f;
+}
+.markdown-body a {
+    color: #0ff;
+    text-shadow: 0 0 5px #0ff;
+}`,
+    'sys:contrast': `/* HIGH CONTRAST */
+.markdown-body {
+    font-family: var(--preview-font);
+    background: #fff;
+    color: #000;
+    font-weight: bold;
+}
+.markdown-body h1, .markdown-body h2 {
+    background: #000;
+    color: #fff;
+    padding: 10px;
+}
+.markdown-body table, .markdown-body th, .markdown-body td {
+    border: 2px solid #000;
 }`
 };
 
@@ -571,8 +681,24 @@ if (btnDeleteCss) {
     });
 }
 
+// Font selection logic
+const fontSelector = document.getElementById('font-selector');
+if (fontSelector) {
+    fontSelector.addEventListener('change', (e) => {
+        const font = e.target.value;
+        document.documentElement.style.setProperty('--preview-font', font);
+        localStorage.setItem('previewFont', font);
+        initMermaid().then(() => updatePreview());
+    });
+}
+
 // Initial load
 CSSStore.load();
+const savedFont = localStorage.getItem('previewFont');
+if (savedFont && fontSelector) {
+    fontSelector.value = savedFont;
+    document.documentElement.style.setProperty('--preview-font', savedFont);
+}
 const lastPreset = localStorage.getItem('lastCssPreset') || 'sys:technical';
 const savedCss = localStorage.getItem('customCss');
 

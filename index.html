@@ -6,6 +6,9 @@
     <title>CAD-MD EDITOR</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Fira+Code&family=IBM+Plex+Mono&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Lato&family=Lora&family=Merriweather&family=Noto+Sans+JP:wght@400;700&family=Open+Sans&family=PT+Serif&family=Playfair+Display&family=Press+Start+2P&family=Roboto+Mono&family=Roboto:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
     <style id="user-custom-css"></style>
     <script src="https://cdn.jsdelivr.net/npm/markdown-wasm@1.2.0/dist/markdown.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
@@ -91,6 +94,13 @@
                                 <option value="sys:technical">TECHNICAL (CAD)</option>
                                 <option value="sys:blueprint">BLUEPRINT</option>
                                 <option value="sys:paper">PAPER (REPORT)</option>
+                                <option value="sys:minimal">CLEAN MINIMAL</option>
+                                <option value="sys:terminal">RETRO TERMINAL</option>
+                                <option value="sys:cyberpunk">NEON CYBERPUNK</option>
+                                <option value="sys:solarized">SOLARIZED DARK</option>
+                                <option value="sys:academia">DARK ACADEMIA</option>
+                                <option value="sys:neon">NEON NIGHT</option>
+                                <option value="sys:contrast">HIGH CONTRAST</option>
                                 <option disabled>--- ユーザー定義 ---</option>
                             </select>
                             <button id="btn-delete-preset" title="プリセットを削除" style="background: #a00; color: white;"><i class="fas fa-trash"></i></button>
@@ -102,6 +112,35 @@
                             <input type="text" id="preset-name" placeholder="プリセット名を入力...">
                             <button id="btn-save-preset" style="background: var(--btn-success-bg); color: white;"><i class="fas fa-save"></i> SAVE</button>
                         </div>
+                    </div>
+                    <div class="settings-group">
+                        <label>PREVIEW FONT</label>
+                        <select id="font-selector">
+                            <optgroup label="等幅 (Monospace)">
+                                <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+                                <option value="'Fira Code', monospace">Fira Code</option>
+                                <option value="'IBM Plex Mono', monospace">IBM Plex Mono</option>
+                                <option value="'Roboto Mono', monospace">Roboto Mono</option>
+                                <option value="'Space Mono', monospace">Space Mono</option>
+                                <option value="'Courier Prime', monospace">Courier Prime</option>
+                            </optgroup>
+                            <optgroup label="サンセリフ (Sans-Serif)">
+                                <option value="'Inter', sans-serif">Inter</option>
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Noto Sans JP', sans-serif">Noto Sans JP</option>
+                            </optgroup>
+                            <optgroup label="セリフ (Serif)">
+                                <option value="'Lora', serif">Lora</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'PT Serif', serif">PT Serif</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
+                            </optgroup>
+                            <optgroup label="特殊 (Display)">
+                                <option value="'Press Start 2P', cursive">Press Start 2P (Retro)</option>
+                            </optgroup>
+                        </select>
                     </div>
                     <div class="settings-group">
                         <label>CSS EDITOR</label>
