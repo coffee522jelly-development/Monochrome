@@ -15,6 +15,7 @@
     --mermaid-border: #333333;
     --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
     --preview-font: 'JetBrains Mono', monospace;
+    --preview-font-size: 14px;
 }
 
 /* Light mode (still minimalist/technical) */
@@ -177,7 +178,7 @@ optgroup {
 /* Technical Markdown Styling */
 .markdown-body {
     line-height: 1.6;
-    font-size: 14px;
+    font-size: var(--preview-font-size);
     font-family: var(--preview-font) !important;
 }
 
@@ -412,7 +413,7 @@ input[type="range"] {
     gap: 5px;
 }
 
-.settings-group input[type="text"] {
+.settings-group input[type="text"], .settings-group input[type="number"] {
     flex: 1;
     background-color: #000;
     border: 1px solid var(--border-color);

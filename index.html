@@ -114,8 +114,9 @@
                         </div>
                     </div>
                     <div class="settings-group">
-                        <label>PREVIEW FONT</label>
-                        <select id="font-selector">
+                        <label>PREVIEW FONT & SIZE</label>
+                        <div class="preset-controls">
+                            <select id="font-selector" style="flex: 1;">
                             <optgroup label="等幅 (Monospace)">
                                 <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
                                 <option value="'Fira Code', monospace">Fira Code</option>
@@ -141,6 +142,8 @@
                                 <option value="'Press Start 2P', cursive">Press Start 2P (Retro)</option>
                             </optgroup>
                         </select>
+                        <input type="number" id="font-size-input" value="14" min="8" max="48" style="width: 60px;">
+                        </div>
                     </div>
                     <div class="settings-group">
                         <label>CSS EDITOR</label>

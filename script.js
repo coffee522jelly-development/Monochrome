@@ -681,13 +681,25 @@ if (btnDeleteCss) {
     });
 }
 
-// Font selection logic
+// Font selection & size logic
 const fontSelector = document.getElementById('font-selector');
+const fontSizeInput = document.getElementById('font-size-input');
+
 if (fontSelector) {
     fontSelector.addEventListener('change', (e) => {
         const font = e.target.value;
         document.documentElement.style.setProperty('--preview-font', font);
         localStorage.setItem('previewFont', font);
+        initMermaid().then(() => updatePreview());
+    });
+}
+
+if (fontSizeInput) {
+    fontSizeInput.addEventListener('input', (e) => {
+        const size = e.target.value + "px";
+        document.documentElement.style.setProperty('--preview-font-size', size);
+        localStorage.setItem('previewFontSize', e.target.value);
+        // Refresh mermaid to prevent text overflow in SVGs
         initMermaid().then(() => updatePreview());
     });
 }
@@ -698,6 +710,12 @@ const savedFont = localStorage.getItem('previewFont');
 if (savedFont && fontSelector) {
     fontSelector.value = savedFont;
     document.documentElement.style.setProperty('--preview-font', savedFont);
+}
+
+const savedFontSize = localStorage.getItem('previewFontSize');
+if (savedFontSize && fontSizeInput) {
+    fontSizeInput.value = savedFontSize;
+    document.documentElement.style.setProperty('--preview-font-size', savedFontSize + "px");
 }
 const lastPreset = localStorage.getItem('lastCssPreset') || 'sys:technical';
 const savedCss = localStorage.getItem('customCss');
