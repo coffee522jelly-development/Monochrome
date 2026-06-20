@@ -836,58 +836,105 @@ if (btnExportPortable) {
     });
 }
 
-// PDF Export (Stability Fix)
+// PDF Export (Robust Isolated Iframe Strategy)
 const btnPdf = document.getElementById('btn-pdf');
 if (btnPdf) {
     btnPdf.addEventListener('click', async () => {
-        const element = document.getElementById('preview');
-        const container = document.getElementById('preview-container');
+        const preview = document.getElementById('preview');
         const isDarkMode = document.body.classList.contains('dark-mode') || !document.body.classList.contains('light-mode');
 
-        // Strategy: Temporarily fix preview width to ensure correct scaling without cloning
-        const originalWidth = container.style.width;
-        const originalMaxW = container.style.maxWidth;
-        const originalOverflow = container.style.overflow;
-
         try {
-            btnPdf.textContent = "処理中...";
+            btnPdf.textContent = "書き出し中...";
             btnPdf.disabled = true;
 
-            // Fix dimensions for capture
-            container.style.width = '800px';
-            container.style.maxWidth = '800px';
-            container.style.overflow = 'visible';
+            // 1. Create a hidden iframe for clean rendering
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.left = '-9999px';
+            iframe.style.top = '0';
+            iframe.style.width = '210mm'; // A4 width
+            iframe.style.height = '100%';
+            document.body.appendChild(iframe);
 
-            // Give a tiny moment for layout to stabilize
-            await new Promise(r => setTimeout(r, 100));
+            const doc = iframe.contentWindow.document;
+            doc.open();
+
+            // 2. Clone head (styles, fonts) and setup body
+            const headHtml = Array.from(document.head.children)
+                .map(el => el.outerHTML).join('\n');
+
+            const exportHtml = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    ${headHtml}
+                    <style>
+                        body {
+                            margin: 0 !important;
+                            padding: 20mm !important;
+                            width: 210mm !important;
+                            box-sizing: border-box !important;
+                            background-color: ${isDarkMode ? '#1a1a1a' : '#ffffff'} !important;
+                            color: ${isDarkMode ? '#e0e0e0' : '#000000'} !important;
+                        }
+                        .markdown-body {
+                            width: 100% !important;
+                            background: transparent !important;
+                        }
+                        /* Correct SVG sizing for PDF engine */
+                        svg {
+                            max-width: 100% !important;
+                            height: auto !important;
+                        }
+                    </style>
+                </head>
+                <body class="${document.body.className}">
+                    <div class="markdown-body">
+                        ${preview.innerHTML}
+                    </div>
+                </body>
+                </html>
+            `;
+
+            doc.write(exportHtml);
+            doc.close();
+
+            // 3. Wait for fonts/resources and stabilized rendering
+            await new Promise(r => setTimeout(r, 1000));
+
+            // Ensure SVGs in iframe have explicit dimensions
+            const svgs = doc.querySelectorAll('svg');
+            svgs.forEach(svg => {
+                const rect = svg.getBoundingClientRect();
+                if (rect.width > 0) {
+                    svg.setAttribute('width', rect.width);
+                    svg.setAttribute('height', rect.height);
+                }
+            });
 
             const opt = {
-                margin: 10,
+                margin: 0,
                 filename: 'document_export.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: {
                     scale: 2,
-                    backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
                     useCORS: true,
                     logging: false,
-                    scrollX: 0,
-                    scrollY: 0
+                    letterRendering: true,
+                    windowWidth: 794 // 210mm at 96dpi
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
             if (typeof html2pdf !== 'undefined') {
-                await html2pdf().set(opt).from(element).save();
+                await html2pdf().set(opt).from(doc.body).save();
             }
+
+            document.body.removeChild(iframe);
         } catch (err) {
             console.error("PDF Export Error:", err);
-            alert("PDFの書き出し中にエラーが発生しました。");
+            alert("PDFの書き出し中にエラーが発生しました。詳細はコンソールを確認してください。");
         } finally {
-            // Restore original styles
-            container.style.width = originalWidth;
-            container.style.maxWidth = originalMaxW;
-            container.style.overflow = originalOverflow;
-
             btnPdf.textContent = "PDF保存";
             btnPdf.disabled = false;
         }
