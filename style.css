@@ -542,6 +542,58 @@ input[type="range"] {
     cursor: pointer;
 }
 
+/* Print Optimization */
+@media print {
+    #toolbar, #properties-sidebar, #editor-container, #status-bar, #settings-panel, #help-overlay {
+        display: none !important;
+    }
+
+    #main-container {
+        display: block !important;
+        border: none !important;
+    }
+
+    #preview-container {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+        background-color: white !important;
+        padding: 0 !important;
+    }
+
+    #preview {
+        padding: 10mm !important;
+        width: 100% !important;
+        background-color: white !important;
+        color: black !important;
+    }
+
+    .markdown-body {
+        font-size: var(--preview-font-size) !important;
+        color: black !important;
+        background-color: white !important;
+    }
+
+    .markdown-body h1, .markdown-body h2, .markdown-body h3 {
+        color: black !important;
+        border-bottom-color: #eee !important;
+    }
+
+    /* Reset background colors for light print */
+    .mermaid-rendered {
+        background-color: white !important;
+        filter: none !important;
+    }
+
+    .mermaid-rendered svg {
+        filter: none !important;
+        max-width: 100% !important;
+    }
+}
+
 /* Mobile */
 @media (max-width: 768px) {
     #main-container {

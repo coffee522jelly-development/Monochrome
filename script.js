@@ -807,7 +807,7 @@ editor.addEventListener('keydown', (e) => {
     if (e.ctrlKey || e.metaKey) {
         if (e.key === 'b') { e.preventDefault(); insertAtCursor('**', '**'); }
         else if (e.key === 'i') { e.preventDefault(); insertAtCursor('*', '*'); }
-        else if (e.key === 's') { e.preventDefault(); document.getElementById('btn-pdf').click(); }
+        else if (e.key === 's') { e.preventDefault(); document.getElementById('btn-print').click(); }
     }
 });
 
@@ -1021,6 +1021,14 @@ if (btnToc) {
         } else {
             alert("目次を作成するには、## 以上の見出しが必要です。");
         }
+    });
+}
+
+// Print logic
+const btnPrint = document.getElementById('btn-print');
+if (btnPrint) {
+    btnPrint.addEventListener('click', () => {
+        window.print();
     });
 }
 
