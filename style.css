@@ -180,6 +180,8 @@ optgroup {
     line-height: 1.6;
     font-size: var(--preview-font-size);
     font-family: var(--preview-font) !important;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .markdown-body h1, .markdown-body h2, .markdown-body h3 {
@@ -600,6 +602,15 @@ input[type="range"] {
 
     .mermaid-rendered svg {
         max-width: 100% !important;
+    }
+
+    /* Prevent awkward breaks */
+    .markdown-body h1, .markdown-body h2, .markdown-body h3 {
+        break-after: avoid !important;
+    }
+
+    .markdown-body table, .markdown-body blockquote, .markdown-body pre, .mermaid, .markdown-body img {
+        break-inside: avoid !important;
     }
 }
 

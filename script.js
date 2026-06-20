@@ -1003,3 +1003,6 @@ editor.addEventListener('drop', handleDrop);
 preview.addEventListener('dragover', (e) => { e.preventDefault(); preview.classList.add('drag-active'); });
 preview.addEventListener('dragleave', () => { preview.classList.remove('drag-active'); });
 preview.addEventListener('drop', handleDrop);
+
+// Expose for testing
+window.AssetStore = AssetStore;
