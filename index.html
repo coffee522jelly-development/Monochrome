@@ -12,7 +12,6 @@
     <style id="user-custom-css"></style>
     <script src="https://cdn.jsdelivr.net/npm/markdown-wasm@1.2.0/dist/markdown.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div id="app">
@@ -71,9 +70,8 @@
             </div>
             <div class="toolbar-group">
                 <button title="ポータブル書き出し" id="btn-export-portable"><i class="fas fa-file-export"></i> 外部保存</button>
-                <button id="btn-pdf" title="Canvas形式でPDF保存 (図の縮尺がズレる場合があります)">PDF (簡易)</button>
-                <button id="btn-print" style="background-color: var(--btn-success-bg); color: white;" title="ブラウザの印刷機能を使用して高品質PDFを保存 (推奨)">
-                    <i class="fas fa-print"></i> 高品質PDF保存
+                <button id="btn-print" style="background-color: var(--btn-success-bg); color: white;" title="現在のスタイルを維持してPDFとして保存">
+                    <i class="fas fa-file-pdf"></i> PDF保存
                 </button>
             </div>
             <div class="toolbar-group" style="margin-left: auto;">

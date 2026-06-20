@@ -60,7 +60,7 @@ WebAssembly版のMarkdownパーサー（`markdown-wasm`）を採用。大規模�
 
 - **Markdown パーサー:** [markdown-wasm](https://github.com/rsms/markdown-wasm)
 - **図解エンジン:** [mermaid.js](https://mermaid.js.org/)
-- **PDF 生成:** [html2pdf.js](https://ekoopmans.github.io/html2pdf.js/)
+- **PDF 生成:** ブラウザ標準印刷機能 (高精度レイアウト維持)
 - **フォント:** Google Fonts
 - **アイコン:** Font Awesome
 

@@ -97,7 +97,7 @@ button:active {
     background-color: var(--active-bg);
 }
 
-#btn-pdf {
+#btn-print {
     background-color: var(--btn-success-bg);
     color: white;
 }
@@ -544,6 +544,13 @@ input[type="range"] {
 
 /* Print Optimization */
 @media print {
+    html, body {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
+    }
+
     #toolbar, #properties-sidebar, #editor-container, #status-bar, #settings-panel, #help-overlay {
         display: none !important;
     }
@@ -560,36 +567,38 @@ input[type="range"] {
         width: 100% !important;
         height: auto !important;
         overflow: visible !important;
-        background-color: white !important;
+        background-color: var(--bg-color) !important;
         padding: 0 !important;
     }
 
     #preview {
-        padding: 10mm !important;
+        padding: 15mm !important;
         width: 100% !important;
-        background-color: white !important;
-        color: black !important;
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
     }
 
     .markdown-body {
         font-size: var(--preview-font-size) !important;
-        color: black !important;
-        background-color: white !important;
+        color: var(--text-color) !important;
+        background-color: transparent !important;
+        print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
     }
 
+    /* Preserve colors of preset headers and elements */
     .markdown-body h1, .markdown-body h2, .markdown-body h3 {
-        color: black !important;
-        border-bottom-color: #eee !important;
+        print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
     }
 
-    /* Reset background colors for light print */
     .mermaid-rendered {
-        background-color: white !important;
-        filter: none !important;
+        background-color: var(--mermaid-bg) !important;
+        print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
     }
 
     .mermaid-rendered svg {
-        filter: none !important;
         max-width: 100% !important;
     }
 }
