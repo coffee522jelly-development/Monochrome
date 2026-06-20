@@ -28,7 +28,7 @@
             </div>
             <div class="toolbar-group">
                 <select id="mermaid-presets">
-                    <option value="">MERMAID プリセット...</option>
+                    <option value="">Mermaid 図面プリセット...</option>
                     <option value="flowchart">フローチャート</option>
                     <option value="sequence">シーケンス図</option>
                     <option value="gantt">ガントチャート</option>
@@ -45,7 +45,7 @@
             </div>
             <div class="toolbar-group">
                 <select id="md-presets">
-                    <option value="">MD プリセット...</option>
+                    <option value="">Markdown プリセット...</option>
                     <optgroup label="リスト">
                         <option value="checklist_3">チェックリスト (3個)</option>
                         <option value="checklist_5">チェックリスト (5個)</option>
@@ -67,27 +67,27 @@
                 </select>
             </div>
             <div class="toolbar-group">
-                <button title="目次作成" id="btn-toc"><i class="fas fa-list-ol"></i> TOC</button>
+                <button title="目次作成" id="btn-toc"><i class="fas fa-list-ol"></i> 目次作成</button>
             </div>
             <div class="toolbar-group">
-                <button title="THEME" id="btn-theme"><i class="fas fa-adjust"></i></button>
-                <button title="CSS" id="btn-settings"><i class="fas fa-code"></i></button>
+                <button title="ポータブル書き出し" id="btn-export-portable"><i class="fas fa-file-export"></i> 外部保存</button>
+                <button id="btn-pdf" title="PDFとして書き出し">PDF保存</button>
             </div>
             <div class="toolbar-group" style="margin-left: auto;">
-                <button title="PORTABLE EXPORT" id="btn-export-portable"><i class="fas fa-file-export"></i></button>
-                <button id="btn-pdf">EXPORT PDF</button>
+                <button title="テーマ切り替え" id="btn-theme"><i class="fas fa-adjust"></i></button>
+                <button title="外観・フォント設定" id="btn-settings"><i class="fas fa-cog"></i> 設定</button>
             </div>
         </header>
 
         <div id="settings-panel" class="hidden">
             <div class="settings-content">
                 <div class="settings-header">
-                    <h3>CSS CONFIGURATION</h3>
+                    <h3>外観・フォント設定</h3>
                     <button id="btn-close-settings">&times;</button>
                 </div>
                 <div class="settings-body">
                     <div class="settings-group">
-                        <label>CSS PRESETS</label>
+                        <label>CSS プリセット</label>
                         <div class="preset-controls">
                             <select id="css-presets" style="flex: 1;">
                                 <option value="default">--- システム標準 ---</option>
@@ -107,14 +107,14 @@
                         </div>
                     </div>
                     <div class="settings-group" style="margin-top: 10px;">
-                        <label>SAVE AS NEW PRESET</label>
+                        <label>新規プリセットとして保存</label>
                         <div class="preset-controls">
                             <input type="text" id="preset-name" placeholder="プリセット名を入力...">
-                            <button id="btn-save-preset" style="background: var(--btn-success-bg); color: white;"><i class="fas fa-save"></i> SAVE</button>
+                            <button id="btn-save-preset" style="background: var(--btn-success-bg); color: white;"><i class="fas fa-save"></i> 保存</button>
                         </div>
                     </div>
                     <div class="settings-group">
-                        <label>PREVIEW FONT & SIZE</label>
+                        <label>プレビュー用フォント & サイズ</label>
                         <div class="preset-controls">
                             <select id="font-selector" style="flex: 1;">
                             <optgroup label="等幅 (Monospace)">
@@ -146,7 +146,7 @@
                         </div>
                     </div>
                     <div class="settings-group">
-                        <label>CSS EDITOR</label>
+                        <label>CSS エディター</label>
                         <textarea id="custom-css-editor" spellcheck="false" placeholder="/* CSSを入力してください */"></textarea>
                     </div>
                 </div>
@@ -154,66 +154,66 @@
         </div>
         <main id="main-container">
             <div id="editor-container">
-                <textarea id="editor" spellcheck="false" placeholder="READY >"></textarea>
+                <textarea id="editor" spellcheck="false" placeholder="入力を待機中..."></textarea>
             </div>
             <div id="preview-container">
                 <div id="preview" class="markdown-body"></div>
             </div>
             <aside id="properties-sidebar">
                 <div class="sidebar-header">
-                    <span>PROPERTIES</span>
+                    <span>プロパティ</span>
                 </div>
-                <div id="no-selection-msg">NO SELECTION</div>
+                <div id="no-selection-msg">選択されていません</div>
                 <div id="image-properties" class="hidden">
                     <div class="property-group">
-                        <label>ALT TEXT</label>
-                        <input type="text" id="prop-alt" placeholder="Image alt text">
+                        <label>代替テキスト (Alt)</label>
+                        <input type="text" id="prop-alt" placeholder="画像の説明...">
                     </div>
                     <div class="property-group">
-                        <label>WIDTH (<span id="width-val">300</span>px)</label>
+                        <label>サイズ (<span id="width-val">300</span>px)</label>
                         <input type="range" id="prop-width" min="50" max="1200" step="10">
                     </div>
                     <div class="property-group">
-                        <label>ALIGNMENT</label>
+                        <label>配置</label>
                         <div class="prop-toggle-group">
-                            <button data-align="left">LEFT</button>
-                            <button data-align="center">CENTER</button>
-                            <button data-align="right">RIGHT</button>
+                            <button data-align="left">左寄せ</button>
+                            <button data-align="center">中央</button>
+                            <button data-align="right">右寄せ</button>
                         </div>
                     </div>
                     <div class="property-group" style="margin-top: 20px; font-size: 10px; color: #888;">
-                        <label>ASSET ID</label>
+                        <label>アセットID</label>
                         <code id="prop-id"></code>
                     </div>
                 </div>
             </aside>
         </main>
         <footer id="status-bar">
-            <div class="status-item"><span id="stat-lines">0</span> LINES</div>
-            <div class="status-item"><span id="stat-words">0</span> WORDS</div>
-            <div class="status-item"><span id="stat-chars">0</span> CHARS</div>
+            <div class="status-item"><span id="stat-lines">0</span> 行</div>
+            <div class="status-item"><span id="stat-words">0</span> 単語</div>
+            <div class="status-item"><span id="stat-chars">0</span> 文字</div>
             <div class="status-spacer"></div>
-            <div class="status-item" id="save-status">SAVED</div>
+            <div class="status-item" id="save-status">保存済み</div>
             <div class="status-item" id="btn-help" style="cursor:pointer; border-left: 1px solid var(--border-color); padding-left: 10px;" title="ショートカットを表示">
-                <i class="fas fa-question-circle"></i> HELP
+                <i class="fas fa-question-circle"></i> ヘルプ
             </div>
         </footer>
     </div>
     <div id="help-overlay" class="hidden">
         <div class="help-content">
             <div class="help-header">
-                <h3>KEYBOARD SHORTCUTS</h3>
+                <h3>キーボードショートカット</h3>
                 <button id="btn-close-help">&times;</button>
             </div>
             <div class="help-body">
-                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>B</kbd> <span>Bold</span></div>
-                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>I</kbd> <span>Italic</span></div>
-                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>Z</kbd> <span>Undo</span></div>
-                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>Y</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd> <span>Redo</span></div>
-                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>S</kbd> <span>Export PDF</span></div>
-                <div class="help-item"><kbd>Tab</kbd> <span>Insert 4 spaces</span></div>
-                <div class="help-item"><kbd>Drop MD File</kbd> <span>Import Markdown</span></div>
-                <div class="help-item"><kbd>Drop Image</kbd> <span>Import Image</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>B</kbd> <span>太字</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>I</kbd> <span>斜体</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>Z</kbd> <span>元に戻す (Undo)</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>Y</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd> <span>やり直し (Redo)</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>S</kbd> <span>PDF保存</span></div>
+                <div class="help-item"><kbd>Tab</kbd> <span>4スペース挿入</span></div>
+                <div class="help-item"><kbd>MDドロップ</kbd> <span>Markdownインポート</span></div>
+                <div class="help-item"><kbd>画像ドロップ</kbd> <span>画像インポート</span></div>
             </div>
         </div>
     </div>

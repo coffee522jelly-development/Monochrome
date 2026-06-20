@@ -743,20 +743,20 @@ if (savedCss) {
     document.getElementById('css-presets').dispatchEvent(new Event('change'));
 }
 
-// Mermaid templates
+// Mermaid templates (Localized)
 const mermaidTemplates = {
-    flowchart: 'graph TD\n    A[START] --> B{CHECK}\n    B -- YES --> C[OK]\n    B -- NO --> D[ERR]',
-    sequence: 'sequenceDiagram\n    Alice->>Bob: Hello Bob, how are you?\n    Bob-->>Alice: Jolly good!',
-    gantt: 'gantt\n    title A Gantt Diagram\n    section Section\n    A task           :a1, 2023-01-01, 30d\n    Another task     :after a1  , 20d',
-    class: 'classDiagram\n    Animal <|-- Duck\n    Animal <|-- Fish\n    Animal <|-- Zebra\n    class Animal{\n        +int age\n        +String gender\n        +isMammal()\n        +mate()\n    }',
-    state: 'stateDiagram-v2\n    [*] --> Still\n    Still --> [*]\n    Still --> Moving\n    Moving --> Still\n    Moving --> Crash\n    Crash --> [*]',
-    er: 'erDiagram\n    CUSTOMER ||--o{ ORDER : places\n    ORDER ||--|{ LINE-ITEM : contains\n    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses',
-    pie: 'pie title Pets adopted by volunteers\n    "Dogs" : 386\n    "Cats" : 85\n    "Rats" : 15',
-    journey: 'journey\n    title My working day\n    section Go to work\n      Make tea: 5: Me\n      Go upstairs: 3: Me\n      Do work: 1: Me, Cat\n    section Go home\n      Go downstairs: 5: Me\n      Sit down: 5: Me',
+    flowchart: 'graph TD\n    A[開始] --> B{判定}\n    B -- はい --> C[正常終了]\n    B -- いいえ --> D[エラー終了]',
+    sequence: 'sequenceDiagram\n    アリス->>ボブ: こんにちは、ボブ！元気？\n    ボブ-->>アリス: 絶好調だよ！',
+    gantt: 'gantt\n    title ガントチャートの例\n    section セクション1\n    タスクA           :a1, 2023-01-01, 30d\n    タスクB           :after a1  , 20d',
+    class: 'classDiagram\n    動物 <|-- アヒル\n    動物 <|-- 魚\n    動物 <|-- シマウマ\n    class 動物{\n        +int 年齢\n        +String 性別\n        +哺乳類か()\n        +交尾する()\n    }',
+    state: 'stateDiagram-v2\n    [*] --> 停止中\n    停止中 --> [*]\n    停止中 --> 移動中\n    移動中 --> 停止中\n    移動中 --> 衝突\n    衝突 --> [*]',
+    er: 'erDiagram\n    顧客 ||--o{ 注文 : 行う\n    注文 ||--|{ 注文項目 : 含む\n    顧客 }|..|{ 配送先住所 : 使用する',
+    pie: 'pie title 飼っているペット\n    "イヌ" : 386\n    "ネコ" : 85\n    "ネズミ" : 15',
+    journey: 'journey\n    title ある一日の流れ\n    section 出勤\n      お茶を淹れる: 5: 自分\n      階段を上る: 3: 自分\n      仕事をする: 1: 自分, 猫\n    section 帰宅\n      階段を下りる: 5: 自分\n      座る: 5: 自分',
     git: 'gitGraph\n    commit\n    commit\n    branch develop\n    checkout develop\n    commit\n    commit\n    checkout main\n    merge develop\n    commit',
-    mindmap: 'mindmap\n  root((mindmap))\n    Origins\n      Long history\n      ::icon(fa fa-book)\n      Popularisation\n        British popular psychology author Tony Buzan\n    Research\n      On effectiveness and features\n      On Oveview and Detail\n    Tools\n      Pen and paper\n      Mermaid',
-    timeline: 'timeline\n    title History of Social Media Platform\n    2002 : LinkedIn\n    2004 : Facebook : Google\n    2005 : Youtube\n    2006 : Twitter',
-    quadrant: 'quadrantChart\n    title Reach and engagement of campaigns\n    x-axis Low Reach --> High Reach\n    y-axis Low Engagement --> High Engagement\n    quadrant-1 We should expand\n    quadrant-2 Need to promote\n    quadrant-3 Re-evaluate\n    quadrant-4 May be improved\n    Campaign A: [0.3, 0.6]\n    Campaign B: [0.45, 0.23]\n    Campaign C: [0.57, 0.69]\n    Campaign D: [0.78, 0.34]\n    Campaign E: [0.40, 0.34]\n    Campaign F: [0.58, 0.14]'
+    mindmap: 'mindmap\n  root((マインドマップ))\n    起源\n      長い歴史\n      ::icon(fa fa-book)\n      普及\n        英国の心理学著者 トニー・ブザン\n    研究\n      有効性と特徴について\n      全体像と詳細について\n    ツール\n      ペンと紙\n      Mermaid',
+    timeline: 'timeline\n    title ソーシャルメディアの歴史\n    2002 : LinkedIn\n    2004 : Facebook : Google\n    2005 : Youtube\n    2006 : Twitter',
+    quadrant: 'quadrantChart\n    title キャンペーンの到達度とエンゲージメント\n    x-axis 低到達 --> 高到達\n    y-axis 低エンゲージメント --> 高エンゲージメント\n    quadrant-1 拡大すべき\n    quadrant-2 促進が必要\n    quadrant-3 再評価が必要\n    quadrant-4 改善の余地あり\n    キャンペーンA: [0.3, 0.6]\n    キャンペーンB: [0.45, 0.23]\n    キャンペーンC: [0.57, 0.69]\n    キャンペーンD: [0.78, 0.34]\n    キャンペーンE: [0.40, 0.34]\n    キャンペーンF: [0.58, 0.14]'
 };
 
 const mermaidPresets = document.getElementById('mermaid-presets');
@@ -782,20 +782,20 @@ function handleMdSelection() {
 if (mermaidPresets) mermaidPresets.addEventListener('change', handleMermaidSelection);
 if (mdPresets) mdPresets.addEventListener('change', handleMdSelection);
 
-// Markdown templates
+// Markdown templates (Localized)
 const markdownTemplates = {
-    checklist_3: '- [ ] Item 1\n- [ ] Item 2\n- [ ] Item 3',
-    checklist_5: '- [ ] Item 1\n- [ ] Item 2\n- [ ] Item 3\n- [ ] Item 4\n- [ ] Item 5',
-    bullet_3: '- Item 1\n- Item 2\n- Item 3',
-    bullet_nested: '- Parent 1\n    - Child 1.1\n    - Child 1.2\n- Parent 2\n    - Child 2.1',
-    table_3x3: '| Header 1 | Header 2 | Header 3 |\n| --- | --- | --- |\n| Cell 1-1 | Cell 1-2 | Cell 1-3 |\n| Cell 2-1 | Cell 2-2 | Cell 2-3 |\n| Cell 3-1 | Cell 3-2 | Cell 3-3 |',
+    checklist_3: '- [ ] 項目 1\n- [ ] 項目 2\n- [ ] 項目 3',
+    checklist_5: '- [ ] 項目 1\n- [ ] 項目 2\n- [ ] 項目 3\n- [ ] 項目 4\n- [ ] 項目 5',
+    bullet_3: '- 項目 1\n- 項目 2\n- 項目 3',
+    bullet_nested: '- 親要素 1\n    - 子要素 1.1\n    - 子要素 1.2\n- 親要素 2\n    - 子要素 2.1',
+    table_3x3: '| ヘッダー 1 | ヘッダー 2 | ヘッダー 3 |\n| --- | --- | --- |\n| セル 1-1 | セル 1-2 | セル 1-3 |\n| セル 2-1 | セル 2-2 | セル 2-3 |\n| セル 3-1 | セル 3-2 | セル 3-3 |',
     table_5x5: '| H1 | H2 | H3 | H4 | H5 |\n| --- | --- | --- | --- | --- |\n| C1-1 | C1-2 | C1-3 | C1-4 | C1-5 |\n| C2-1 | C2-2 | C2-3 | C2-4 | C2-5 |\n| C3-1 | C3-2 | C3-3 | C3-4 | C3-5 |\n| C4-1 | C4-2 | C4-3 | C4-4 | C4-5 |\n| C5-1 | C5-2 | C5-3 | C5-4 | C5-5 |',
-    table_header_only: '| Header 1 | Header 2 |\n| --- | --- |',
+    table_header_only: '| ヘッダー 1 | ヘッダー 2 |\n| --- | --- |',
     hr: '\n---\n',
     math: '$$\nL = \\frac{1}{2} \\rho v^2 S C_L\n$$',
-    callout_info: '> [!INFO]\n> This is an informational callout.',
-    callout_warn: '> [!WARNING]\n> This is a warning callout.',
-    details: '<details>\n<summary>Click to expand</summary>\n\nContent here...\n</details>'
+    callout_info: '> [!INFO]\n> これは情報コールアウトです。',
+    callout_warn: '> [!WARNING]\n> これは警告コールアウトです。',
+    details: '<details>\n<summary>クリックで展開</summary>\n\n内容をここに入力...\n</details>'
 };
 
 // Editor enhancements
@@ -888,7 +888,7 @@ editor.addEventListener('input', () => {
 let saveTimeout;
 function autoSave() {
     const saveStatus = document.getElementById('save-status');
-    saveStatus.textContent = "SAVING...";
+    saveStatus.textContent = "保存中...";
     saveStatus.style.opacity = "1";
 
     clearTimeout(saveTimeout);
@@ -898,7 +898,7 @@ function autoSave() {
         AssetStore.assets.forEach((v, k) => assetObj[k] = v);
         localStorage.setItem('assetStore', JSON.stringify(assetObj));
 
-        saveStatus.textContent = "SAVED";
+        saveStatus.textContent = "保存済み";
         saveStatus.style.opacity = "0.7";
     }, 1000);
 }
