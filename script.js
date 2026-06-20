@@ -22,11 +22,21 @@ const AssetStore = {
 async function initMermaid() {
     if (typeof mermaid === 'undefined') return;
     const isDark = document.body.classList.contains('dark-mode') || !document.body.classList.contains('light-mode');
+
+    // Get current preview settings
+    const font = getComputedStyle(document.documentElement).getPropertyValue('--preview-font').trim().replace(/['"]/g, '') || 'monospace';
+    const fontSize = getComputedStyle(document.documentElement).getPropertyValue('--preview-font-size').trim() || '14px';
+
     mermaid.initialize({
         startOnLoad: false,
         theme: isDark ? 'dark' : 'default',
         securityLevel: 'loose',
-        fontFamily: 'monospace',
+        fontFamily: font,
+        fontSize: parseInt(fontSize),
+        themeVariables: {
+            fontFamily: font,
+            fontSize: fontSize
+        }
     });
 }
 

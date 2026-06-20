@@ -246,6 +246,15 @@ optgroup {
     filter: brightness(0.8) contrast(1.2); /* Technical look */
 }
 
+/* Force mermaid text elements to respect global font size variables */
+.mermaid-rendered svg text,
+.mermaid-rendered svg .label,
+.mermaid-rendered svg foreignObject span,
+.mermaid-rendered svg foreignObject div {
+    font-family: var(--preview-font) !important;
+    font-size: var(--preview-font-size) !important;
+}
+
 .mermaid-error {
     color: #ff5555;
     background-color: #2a0000;
