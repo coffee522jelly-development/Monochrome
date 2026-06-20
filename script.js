@@ -836,61 +836,60 @@ if (btnExportPortable) {
     });
 }
 
-// PDF Export (Refined for correct scaling)
+// PDF Export (Stability Fix)
 const btnPdf = document.getElementById('btn-pdf');
 if (btnPdf) {
     btnPdf.addEventListener('click', async () => {
         const element = document.getElementById('preview');
+        const container = document.getElementById('preview-container');
         const isDarkMode = document.body.classList.contains('dark-mode') || !document.body.classList.contains('light-mode');
 
-        // Use a temporary container for stable layout during export
-        const worker = document.createElement('div');
-        worker.style.position = 'fixed';
-        worker.style.left = '-9999px';
-        worker.style.top = '0';
-        worker.style.width = '800px'; // Standard width for A4 capture
-        worker.style.backgroundColor = isDarkMode ? '#1a1a1a' : '#ffffff';
-        worker.className = 'markdown-body';
-        worker.innerHTML = element.innerHTML;
-        document.body.appendChild(worker);
+        // Strategy: Temporarily fix preview width to ensure correct scaling without cloning
+        const originalWidth = container.style.width;
+        const originalMaxW = container.style.maxWidth;
+        const originalOverflow = container.style.overflow;
 
-        // Ensure all SVGs (Mermaid) have explicit dimensions for html2canvas
-        const svgs = worker.querySelectorAll('svg');
-        svgs.forEach(svg => {
-            const bbox = svg.getBBox();
-            if (bbox.width > 0) {
-                svg.setAttribute('width', bbox.width);
-                svg.setAttribute('height', bbox.height);
+        try {
+            btnPdf.textContent = "処理中...";
+            btnPdf.disabled = true;
+
+            // Fix dimensions for capture
+            container.style.width = '800px';
+            container.style.maxWidth = '800px';
+            container.style.overflow = 'visible';
+
+            // Give a tiny moment for layout to stabilize
+            await new Promise(r => setTimeout(r, 100));
+
+            const opt = {
+                margin: 10,
+                filename: 'document_export.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
+                    useCORS: true,
+                    logging: false,
+                    scrollX: 0,
+                    scrollY: 0
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            if (typeof html2pdf !== 'undefined') {
+                await html2pdf().set(opt).from(element).save();
             }
-        });
+        } catch (err) {
+            console.error("PDF Export Error:", err);
+            alert("PDFの書き出し中にエラーが発生しました。");
+        } finally {
+            // Restore original styles
+            container.style.width = originalWidth;
+            container.style.maxWidth = originalMaxW;
+            container.style.overflow = originalOverflow;
 
-        const opt = {
-            margin: 10,
-            filename: 'document_export.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: {
-                scale: 2,
-                backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
-                useCORS: true,
-                logging: false,
-                width: 800
-            },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        if (typeof html2pdf !== 'undefined') {
-            try {
-                btnPdf.textContent = "処理中...";
-                btnPdf.disabled = true;
-                await html2pdf().set(opt).from(worker).save();
-            } catch (err) {
-                console.error("PDF Export Error:", err);
-                alert("PDFの書き出し中にエラーが発生しました。");
-            } finally {
-                btnPdf.textContent = "PDF保存";
-                btnPdf.disabled = false;
-                document.body.removeChild(worker);
-            }
+            btnPdf.textContent = "PDF保存";
+            btnPdf.disabled = false;
         }
     });
 }
