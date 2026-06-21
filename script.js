@@ -1075,12 +1075,20 @@ const slideContainer = document.getElementById('slide-container');
 const slideNumber = document.getElementById('slide-number');
 
 function initPresentation() {
-    const content = preview.innerHTML;
-    // Split by <hr> tags which represent --- in markdown
-    const slideHtmls = content.split(/<hr[^>]*>/i);
-
     slideContainer.innerHTML = '';
     slides = [];
+
+    // Check if we already have slide cards (from Slide View)
+    const cards = preview.querySelectorAll('.slide-card');
+    let slideHtmls = [];
+
+    if (cards.length > 0) {
+        slideHtmls = Array.from(cards).map(card => card.querySelector('.markdown-body').innerHTML);
+    } else {
+        // Fallback to splitting by HR if in Document View
+        const content = preview.innerHTML;
+        slideHtmls = content.split(/<hr[^>]*>/i);
+    }
 
     slideHtmls.forEach((html, index) => {
         const slide = document.createElement('div');
@@ -1189,8 +1197,17 @@ async function exportStandaloneHTML() {
         const slideNumber = document.getElementById('slide-number');
 
         function initStandalonePresentation() {
-            const content = document.getElementById('standalone-preview').innerHTML;
-            const slideHtmls = content.split(/<hr[^>]*>/i);
+            const previewEl = document.getElementById('standalone-preview');
+            const cards = previewEl.querySelectorAll('.slide-card');
+            let slideHtmls = [];
+
+            if (cards.length > 0) {
+                slideHtmls = Array.from(cards).map(card => card.querySelector('.markdown-body').innerHTML);
+            } else {
+                const content = previewEl.innerHTML;
+                slideHtmls = content.split(/<hr[^>]*>/i);
+            }
+
             slideContainer.innerHTML = '';
             slides = [];
             slideHtmls.forEach((html) => {
