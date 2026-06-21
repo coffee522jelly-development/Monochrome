@@ -1004,5 +1004,184 @@ preview.addEventListener('dragover', (e) => { e.preventDefault(); preview.classL
 preview.addEventListener('dragleave', () => { preview.classList.remove('drag-active'); });
 preview.addEventListener('drop', handleDrop);
 
+// Presentation Mode Logic
+let currentSlideIndex = 0;
+let slides = [];
+
+const presentationOverlay = document.getElementById('presentation-overlay');
+const slideContainer = document.getElementById('slide-container');
+const slideNumber = document.getElementById('slide-number');
+
+function initPresentation() {
+    const content = preview.innerHTML;
+    // Split by <hr> tags which represent --- in markdown
+    const slideHtmls = content.split(/<hr[^>]*>/i);
+
+    slideContainer.innerHTML = '';
+    slides = [];
+
+    slideHtmls.forEach((html, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        const inner = document.createElement('div');
+        inner.className = 'slide-content markdown-body';
+        inner.innerHTML = html;
+        slide.appendChild(inner);
+        slideContainer.appendChild(slide);
+        slides.push(slide);
+    });
+
+    currentSlideIndex = 0;
+    showSlide(0);
+    presentationOverlay.classList.remove('hidden');
+
+    // Request fullscreen
+    if (presentationOverlay.requestFullscreen) {
+        presentationOverlay.requestFullscreen().catch(() => {});
+    }
+}
+
+function showSlide(index) {
+    if (index < 0 || index >= slides.length) return;
+
+    slides.forEach(s => s.classList.remove('active'));
+    slides[index].classList.add('active');
+    currentSlideIndex = index;
+    slideNumber.textContent = `${index + 1} / ${slides.length}`;
+}
+
+function nextSlide() { if (currentSlideIndex < slides.length - 1) showSlide(currentSlideIndex + 1); }
+function prevSlide() { if (currentSlideIndex > 0) showSlide(currentSlideIndex - 1); }
+
+function exitPresentation() {
+    presentationOverlay.classList.add('hidden');
+    if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+    }
+}
+
+document.getElementById('btn-present').addEventListener('click', initPresentation);
+document.getElementById('btn-exit-present').addEventListener('click', exitPresentation);
+document.getElementById('btn-next-slide').addEventListener('click', nextSlide);
+document.getElementById('btn-prev-slide').addEventListener('click', prevSlide);
+
+window.addEventListener('keydown', (e) => {
+    if (presentationOverlay.classList.contains('hidden')) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+            e.preventDefault();
+            initPresentation();
+        }
+        return;
+    }
+
+    if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+    if (e.key === 'Escape') exitPresentation();
+});
+
+// Single HTML Export
+async function exportStandaloneHTML() {
+    const title = "CAD-MD Presentation: " + (document.querySelector('h1')?.textContent || "Document");
+    const css = Array.from(document.styleSheets)
+        .map(sheet => {
+            try { return Array.from(sheet.cssRules).map(r => r.cssText).join('\n'); }
+            catch(e) { return ''; }
+        }).join('\n') + '\n' + styleTag.textContent;
+
+    // Bundle assets into the HTML directly by replacing internal links
+    let bodyHtml = preview.innerHTML;
+    // We need to ensure we have the presentation overlay logic too
+    const overlayHtml = presentationOverlay.outerHTML.replace('hidden', 'hidden');
+
+    const fullHtml = `<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>${title}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Fira+Code&family=IBM+Plex+Mono&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Lato&family=Lora&family=Merriweather&family=Noto+Sans+JP:wght@400;700&family=Open+Sans&family=PT+Serif&family=Playfair+Display&family=Press+Start+2P&family=Roboto+Mono&family=Roboto:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
+    <style>${css}</style>
+    <style>
+        body { margin: 0; padding: 0; background: var(--bg-color); color: var(--text-color); font-family: var(--preview-font); }
+        #standalone-preview { padding: 40px; max-width: 1000px; margin: 0 auto; }
+        .export-toolbar { position: fixed; top: 10px; right: 10px; z-index: 2000; display: flex; gap: 10px; }
+        .export-toolbar button { background: var(--toolbar-bg, #333); color: #fff; border: 1px solid #555; padding: 5px 15px; cursor: pointer; }
+    </style>
+</head>
+<body class="${document.body.className}">
+    <div class="export-toolbar">
+        <button onclick="window.print()">PDF出力</button>
+        <button onclick="initStandalonePresentation()">プレゼン開始</button>
+    </div>
+    <div id="standalone-preview" class="markdown-body">${bodyHtml}</div>
+    ${overlayHtml}
+
+    <script>
+        // Standalone presentation logic
+        let currentSlideIndex = 0;
+        let slides = [];
+        const presentationOverlay = document.getElementById('presentation-overlay');
+        const slideContainer = document.getElementById('slide-container');
+        const slideNumber = document.getElementById('slide-number');
+
+        function initStandalonePresentation() {
+            const content = document.getElementById('standalone-preview').innerHTML;
+            const slideHtmls = content.split(/<hr[^>]*>/i);
+            slideContainer.innerHTML = '';
+            slides = [];
+            slideHtmls.forEach((html) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                const inner = document.createElement('div');
+                inner.className = 'slide-content markdown-body';
+                inner.innerHTML = html;
+                slide.appendChild(inner);
+                slideContainer.appendChild(slide);
+                slides.push(slide);
+            });
+            currentSlideIndex = 0;
+            showSlide(0);
+            presentationOverlay.classList.remove('hidden');
+        }
+
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+            currentSlideIndex = index;
+            slideNumber.textContent = (index + 1) + ' / ' + slides.length;
+        }
+
+        function nextSlide() { if (currentSlideIndex < slides.length - 1) showSlide(currentSlideIndex + 1); }
+        function prevSlide() { if (currentSlideIndex > 0) showSlide(currentSlideIndex - 1); }
+        function exitPresentation() { presentationOverlay.classList.add('hidden'); }
+
+        document.getElementById('btn-exit-present').onclick = exitPresentation;
+        document.getElementById('btn-next-slide').onclick = nextSlide;
+        document.getElementById('btn-prev-slide').onclick = prevSlide;
+
+        window.onkeydown = (e) => {
+            if (presentationOverlay.classList.contains('hidden')) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'Escape') exitPresentation();
+        };
+    </script>
+</body>
+</html>`;
+
+    const blob = new Blob([fullHtml], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'presentation_export.html';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+document.getElementById('btn-export-html').addEventListener('click', exportStandaloneHTML);
+
 // Expose for testing
 window.AssetStore = AssetStore;

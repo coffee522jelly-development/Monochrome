@@ -67,9 +67,11 @@
             </div>
             <div class="toolbar-group">
                 <button title="目次作成" id="btn-toc"><i class="fas fa-list-ol"></i> 目次作成</button>
+                <button title="プレゼン開始 (Ctrl+P)" id="btn-present"><i class="fas fa-play"></i> プレゼン</button>
             </div>
             <div class="toolbar-group">
                 <button title="ポータブル書き出し" id="btn-export-portable"><i class="fas fa-file-export"></i> 外部保存</button>
+                <button title="単体HTML書き出し" id="btn-export-html"><i class="fas fa-code"></i> HTML保存</button>
                 <button id="btn-print" style="background-color: var(--btn-success-bg); color: white;" title="現在のスタイルを維持してPDFとして保存">
                     <i class="fas fa-file-pdf"></i> PDF保存
                 </button>
@@ -216,6 +218,15 @@
                 <div class="help-item"><kbd>MDドロップ</kbd> <span>Markdownインポート</span></div>
                 <div class="help-item"><kbd>画像ドロップ</kbd> <span>画像インポート</span></div>
             </div>
+        </div>
+    </div>
+    <div id="presentation-overlay" class="hidden">
+        <div id="slide-container"></div>
+        <div id="presentation-controls">
+            <button id="btn-prev-slide"><i class="fas fa-chevron-left"></i></button>
+            <span id="slide-number">1 / 1</span>
+            <button id="btn-next-slide"><i class="fas fa-chevron-right"></i></button>
+            <button id="btn-exit-present" title="終了 (Esc)">&times;</button>
         </div>
     </div>
     <script src="script.js"></script>
