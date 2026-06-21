@@ -961,26 +961,42 @@ if (btnToc) {
     });
 }
 
-// Save Dropdown Logic
-const btnSaveMenu = document.getElementById('btn-save-menu');
-const saveDropdown = document.getElementById('save-dropdown');
+// Universal Dropdown Logic
+const dropdowns = document.querySelectorAll('.dropdown');
 
-if (btnSaveMenu && saveDropdown) {
-    btnSaveMenu.addEventListener('click', (e) => {
-        e.stopPropagation();
-        saveDropdown.classList.toggle('hidden');
-    });
+dropdowns.forEach(dropdown => {
+    const trigger = dropdown.querySelector('.dropdown-trigger');
+    const content = dropdown.querySelector('.dropdown-content');
 
-    // Close on click outside
-    window.addEventListener('click', () => {
-        saveDropdown.classList.add('hidden');
-    });
+    if (trigger && content) {
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Close other dropdowns first
+            document.querySelectorAll('.dropdown-content').forEach(c => {
+                if (c !== content) c.classList.add('hidden');
+            });
+            content.classList.toggle('hidden');
+        });
+    }
+});
 
-    // Also close when any item inside is clicked
-    saveDropdown.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => saveDropdown.classList.add('hidden'));
+// Close all dropdowns on click outside or click on a button inside
+window.addEventListener('click', (e) => {
+    document.querySelectorAll('.dropdown-content').forEach(content => {
+        if (!content.contains(e.target)) {
+            content.classList.add('hidden');
+        }
     });
-}
+});
+
+document.querySelectorAll('.dropdown-content button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        // Don't close if clicking a sub-group or select inside
+        if (e.target.tagName !== 'SELECT') {
+            btn.closest('.dropdown-content').classList.add('hidden');
+        }
+    });
+});
 
 // Print logic
 const btnPrint = document.getElementById('btn-print');
