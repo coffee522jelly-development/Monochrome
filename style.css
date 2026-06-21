@@ -657,18 +657,21 @@ input[type="range"] {
         page-break-after: always !important;
         break-after: page !important;
         width: 100% !important;
-        height: 98vh !important; /* Slightly less than 100 to avoid empty pages */
-        margin: 0 !important;
+        height: auto !important;
+        aspect-ratio: 16 / 9 !important;
+        margin: 0 0 20px 0 !important;
         border: 1px solid var(--border-color) !important;
         box-shadow: none !important;
         display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     /* Handout (2-up) Mode */
     .slide-preview-mode.print-2-up .slide-card {
-        height: 135mm !important; /* Half of A4 (297mm) with margins */
-        margin-bottom: 2mm !important;
-        border-bottom: 1px dashed #555 !important;
+        height: auto !important;
+        margin-bottom: 5mm !important;
+        border-bottom: 1px solid var(--border-color) !important;
         break-after: auto !important; /* Reset individual page breaks */
         page-break-after: auto !important;
     }
@@ -813,11 +816,13 @@ input[type="range"] {
 
 .slide-preview-mode .slide-card .markdown-body {
     font-size: 1.5vw; /* Scale font based on card width */
+        width: 100% !important;
 }
 
 .slide-preview-mode .slide-card h1 { font-size: 3vw; text-align: center; border-bottom: 2px solid var(--btn-success-bg); }
 .slide-preview-mode .slide-card h2 { font-size: 2.2vw; }
 .slide-preview-mode .slide-card .mermaid { transform: scale(1.2); }
+.slide-preview-mode .slide-card img { max-height: 70vh !important; width: auto !important; object-fit: contain; }
 
 #view-mode-group button.active {
     background-color: var(--btn-primary-bg);
