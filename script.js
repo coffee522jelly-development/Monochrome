@@ -67,9 +67,18 @@ function preprocessMarkdown(text) {
     });
 }
 
+// View Mode
+let currentViewMode = 'doc'; // 'doc' or 'slide'
+
 // Update preview function
 async function updatePreview() {
     if (!markdownParser) return;
+
+    if (currentViewMode === 'slide') {
+        document.body.classList.add('slide-preview-mode');
+    } else {
+        document.body.classList.remove('slide-preview-mode');
+    }
 
     const content = editor.value;
     if (!content) {
@@ -83,9 +92,18 @@ async function updatePreview() {
         const contentBytes = encoder.encode(processedContent);
         const output = markdownParser.parse(contentBytes);
 
-        const html = (output instanceof Uint8Array)
+        let html = (output instanceof Uint8Array)
             ? new TextDecoder().decode(output)
             : output;
+
+        if (currentViewMode === 'slide') {
+            const slideHtmls = html.split(/<hr[^>]*>/i);
+            html = slideHtmls.map((s, i) => `
+                <div class="slide-card" data-slide-num="${i + 1}">
+                    <div class="markdown-body">${s}</div>
+                </div>
+            `).join('');
+        }
 
         preview.innerHTML = html;
         await renderMermaid();
@@ -1182,6 +1200,25 @@ async function exportStandaloneHTML() {
 }
 
 document.getElementById('btn-export-html').addEventListener('click', exportStandaloneHTML);
+
+// View Mode Listeners
+const btnViewDoc = document.getElementById('btn-view-doc');
+const btnViewSlide = document.getElementById('btn-view-slide');
+
+if (btnViewDoc && btnViewSlide) {
+    btnViewDoc.addEventListener('click', () => {
+        currentViewMode = 'doc';
+        btnViewDoc.classList.add('active');
+        btnViewSlide.classList.remove('active');
+        updatePreview();
+    });
+    btnViewSlide.addEventListener('click', () => {
+        currentViewMode = 'slide';
+        btnViewSlide.classList.add('active');
+        btnViewDoc.classList.remove('active');
+        updatePreview();
+    });
+}
 
 // Expose for testing
 window.AssetStore = AssetStore;
