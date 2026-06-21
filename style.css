@@ -659,7 +659,7 @@ input[type="range"] {
         width: 100% !important;
         height: 98vh !important; /* Slightly less than 100 to avoid empty pages */
         margin: 0 !important;
-        border: none !important;
+        border: 1px solid var(--border-color) !important;
         box-shadow: none !important;
         display: flex !important;
     }
