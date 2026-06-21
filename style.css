@@ -97,9 +97,48 @@ button:active {
     background-color: var(--active-bg);
 }
 
-#btn-print {
+#btn-save-menu {
     background-color: var(--btn-success-bg);
     color: white;
+}
+
+/* Dropdown Menu Styles */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: -1px;
+    background-color: var(--toolbar-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+    z-index: 300;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown-content.hidden {
+    display: none;
+}
+
+.dropdown-content button {
+    width: 100%;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 15px;
+    white-space: nowrap;
+}
+
+.dropdown-content button:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content button:hover {
+    background-color: var(--hover-bg);
 }
 
 select {

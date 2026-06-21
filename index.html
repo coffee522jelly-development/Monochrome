@@ -75,12 +75,21 @@
             <div class="toolbar-group">
                 <button title="プレゼン開始 (Ctrl+P)" id="btn-present"><i class="fas fa-play"></i> プレゼン</button>
             </div>
-            <div class="toolbar-group">
-                <button title="ポータブル書き出し" id="btn-export-portable"><i class="fas fa-file-export"></i> 外部保存</button>
-                <button title="単体HTML書き出し" id="btn-export-html"><i class="fas fa-code"></i> HTML保存</button>
-                <button id="btn-print" style="background-color: var(--btn-success-bg); color: white;" title="現在のスタイルを維持してPDFとして保存">
-                    <i class="fas fa-file-pdf"></i> PDF保存
+            <div class="toolbar-group dropdown">
+                <button id="btn-save-menu" class="dropdown-trigger" style="background-color: var(--btn-success-bg); color: white;">
+                    <i class="fas fa-save"></i> 保存 <i class="fas fa-caret-down" style="font-size: 0.8em; margin-left: 4px;"></i>
                 </button>
+                <div id="save-dropdown" class="dropdown-content hidden">
+                    <button id="btn-print" title="現在のスタイルを維持してPDFとして保存">
+                        <i class="fas fa-file-pdf"></i> PDF保存
+                    </button>
+                    <button id="btn-export-html" title="単体HTML書き出し">
+                        <i class="fas fa-code"></i> HTML保存
+                    </button>
+                    <button id="btn-export-portable" title="画像を埋め込んだMarkdownとして保存">
+                        <i class="fas fa-file-export"></i> 外部保存 (Portable MD)
+                    </button>
+                </div>
             </div>
             <div class="toolbar-group" style="margin-left: auto;">
                 <button title="テーマ切り替え" id="btn-theme"><i class="fas fa-adjust"></i></button>
