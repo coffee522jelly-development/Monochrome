@@ -103,6 +103,16 @@ async function updatePreview() {
                     <div class="markdown-body">${s}</div>
                 </div>
             `).join('');
+
+            // Apply print layout setting
+            const printLayout = localStorage.getItem('printLayout') || '1-up';
+            if (printLayout === '2-up') {
+                document.body.classList.add('print-2-up');
+            } else {
+                document.body.classList.remove('print-2-up');
+            }
+        } else {
+            document.body.classList.remove('print-2-up');
         }
 
         preview.innerHTML = html;
@@ -722,6 +732,14 @@ if (fontSelector) {
     });
 }
 
+const printLayoutSelector = document.getElementById('print-layout-selector');
+if (printLayoutSelector) {
+    printLayoutSelector.addEventListener('change', (e) => {
+        localStorage.setItem('printLayout', e.target.value);
+        updatePreview();
+    });
+}
+
 if (fontSizeInput) {
     fontSizeInput.addEventListener('input', (e) => {
         const size = e.target.value + "px";
@@ -744,6 +762,11 @@ const savedFontSize = localStorage.getItem('previewFontSize');
 if (savedFontSize && fontSizeInput) {
     fontSizeInput.value = savedFontSize;
     document.documentElement.style.setProperty('--preview-font-size', savedFontSize + "px");
+}
+
+const savedPrintLayout = localStorage.getItem('printLayout');
+if (savedPrintLayout && printLayoutSelector) {
+    printLayoutSelector.value = savedPrintLayout;
 }
 const lastPreset = localStorage.getItem('lastCssPreset') || 'sys:technical';
 const savedCss = localStorage.getItem('customCss');

@@ -624,6 +624,21 @@ input[type="range"] {
         box-shadow: none !important;
         display: flex !important;
     }
+
+    /* Handout (2-up) Mode */
+    .slide-preview-mode.print-2-up .slide-card {
+        height: 135mm !important; /* Half of A4 (297mm) with margins */
+        margin-bottom: 2mm !important;
+        border-bottom: 1px dashed #555 !important;
+        break-after: auto !important; /* Reset individual page breaks */
+        page-break-after: auto !important;
+    }
+
+    .slide-preview-mode.print-2-up .slide-card:nth-child(2n) {
+        break-after: page !important;
+        page-break-after: always !important;
+        border-bottom: none !important;
+    }
 }
 
 /* Presentation Mode */
