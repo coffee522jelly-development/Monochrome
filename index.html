@@ -12,6 +12,8 @@
     <style id="user-custom-css"></style>
     <script src="https://cdn.jsdelivr.net/npm/markdown-wasm@1.2.0/dist/markdown.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 </head>
 <body>
     <div id="app">
@@ -85,6 +87,9 @@
                     </button>
                     <button id="btn-export-html" title="単体HTML書き出し">
                         <i class="fas fa-code"></i> HTML保存
+                    </button>
+                    <button id="btn-export-images" title="各スライドを画像として保存 (ZIP)">
+                        <i class="fas fa-file-image"></i> スライド画像保存 (ZIP)
                     </button>
                     <button id="btn-export-portable" title="画像を埋め込んだMarkdownとして保存">
                         <i class="fas fa-file-export"></i> 外部保存 (Portable MD)

@@ -1262,6 +1262,112 @@ async function exportStandaloneHTML() {
 
 document.getElementById('btn-export-html').addEventListener('click', exportStandaloneHTML);
 
+// Image Export Logic
+async function exportSlidesAsImages() {
+    const saveStatus = document.getElementById('save-status');
+    const originalStatus = saveStatus.textContent;
+    saveStatus.textContent = "画像生成中...";
+    saveStatus.style.opacity = "1";
+
+    try {
+        const zip = new JSZip();
+        const imgFolder = zip.folder("slides");
+
+        // Identify slides using hybrid logic
+        const cards = preview.querySelectorAll('.slide-card');
+        let slideHtmls = [];
+        if (cards.length > 0) {
+            slideHtmls = Array.from(cards).map(card => card.querySelector('.markdown-body').innerHTML);
+        } else {
+            const content = preview.innerHTML;
+            slideHtmls = content.split(/<hr[^>]*>/i);
+        }
+
+        if (slideHtmls.length === 0) {
+            alert("エクスポートするスライドがありません。");
+            return;
+        }
+
+        // Create a hidden container for high-res rendering
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '-9999px';
+        container.style.left = '-9999px';
+        container.style.width = '1920px'; // High-res 16:9
+        container.style.height = '1080px';
+        container.className = 'slide-preview-mode'; // Apply slide styles
+        document.body.appendChild(container);
+
+        const card = document.createElement('div');
+        card.className = 'slide-card';
+        card.style.width = '100%';
+        card.style.height = '100%';
+        card.style.margin = '0';
+        card.style.border = 'none';
+
+        const body = document.createElement('div');
+        body.className = 'markdown-body';
+        card.appendChild(body);
+        container.appendChild(card);
+
+        // Copy styles to the container's context if needed,
+        // but since it's in the same document, global styles apply.
+
+        for (let i = 0; i < slideHtmls.length; i++) {
+            saveStatus.textContent = `画像生成中 (${i + 1}/${slideHtmls.length})...`;
+            body.innerHTML = slideHtmls[i];
+
+            // Re-render mermaid for this specific context
+            const mermaidBlocks = body.querySelectorAll('pre > code.language-mermaid');
+            for (let j = 0; j < mermaidBlocks.length; j++) {
+                const block = mermaidBlocks[j];
+                const pre = block.parentElement;
+                const code = block.textContent.trim();
+                const id = `mermaid-export-${i}-${j}`;
+                const { svg } = await mermaid.render(id, code);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'mermaid-rendered';
+                wrapper.innerHTML = svg;
+                pre.style.display = 'none';
+                pre.insertAdjacentElement('afterend', wrapper);
+            }
+
+            // Wait a bit for font rendering/layouts
+            await new Promise(r => setTimeout(r, 100));
+
+            const dataUrl = await htmlToImage.toPng(card, {
+                width: 1920,
+                height: 1080,
+                style: {
+                    transform: 'none',
+                    margin: '0'
+                }
+            });
+
+            const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+            imgFolder.file(`slide_${String(i + 1).padStart(3, '0')}.png`, base64Data, {base64: true});
+        }
+
+        const content = await zip.generateAsync({type:"blob"});
+        const url = URL.createObjectURL(content);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'slides_images.zip';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        document.body.removeChild(container);
+    } catch (err) {
+        console.error("Image export failed:", err);
+        alert("画像のエクスポートに失敗しました。詳細はコンソールを確認してください。");
+    } finally {
+        saveStatus.textContent = originalStatus;
+        saveStatus.style.opacity = "0.7";
+    }
+}
+
+document.getElementById('btn-export-images').addEventListener('click', exportSlidesAsImages);
+
 // View Mode Listeners
 const btnViewDoc = document.getElementById('btn-view-doc');
 const btnViewSlide = document.getElementById('btn-view-slide');
