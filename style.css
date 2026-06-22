@@ -686,6 +686,22 @@ input[type="range"] {
         page-break-after: always !important;
         border-bottom: none !important;
     }
+
+    /* Board Mode Print Layout */
+    .board-preview-mode .board-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10mm !important;
+        width: 100% !important;
+    }
+
+    .board-preview-mode .board-card {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        margin-bottom: 10mm !important;
+        border: 1px solid var(--border-color) !important;
+        background-color: var(--toolbar-bg) !important;
+    }
 }
 
 /* Presentation Mode */
