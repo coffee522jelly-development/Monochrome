@@ -829,9 +829,50 @@ input[type="range"] {
 .slide-preview-mode .slide-card .mermaid { transform: scale(1.2); }
 .slide-preview-mode .slide-card img { max-height: 70vh !important; width: auto !important; object-fit: contain; }
 
-#view-mode-group button.active {
+#view-mode-group button.active,
+#toolbar button.active {
     background-color: var(--btn-primary-bg);
     color: white;
+}
+
+/* Board Preview Mode */
+.board-preview-mode #preview {
+    background-color: var(--bg-color);
+    padding: 20px;
+}
+
+.board-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 20px;
+    align-items: start;
+}
+
+.board-card {
+    background-color: var(--toolbar-bg);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.board-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--btn-primary-bg);
+}
+
+.board-card .markdown-body {
+    font-size: 0.9em;
+}
+
+.board-card h1, .board-card h2 {
+    font-size: 1.2em;
+    margin-top: 0;
+}
+
+.board-card .mermaid {
+    transform: scale(0.9);
+    margin: 10px 0;
 }
 
 /* Mobile */

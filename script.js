@@ -68,17 +68,14 @@ function preprocessMarkdown(text) {
 }
 
 // View Mode
-let currentViewMode = 'doc'; // 'doc' or 'slide'
+let currentViewMode = 'doc'; // 'doc', 'slide', or 'board'
 
 // Update preview function
 async function updatePreview() {
     if (!markdownParser) return;
 
-    if (currentViewMode === 'slide') {
-        document.body.classList.add('slide-preview-mode');
-    } else {
-        document.body.classList.remove('slide-preview-mode');
-    }
+    document.body.classList.toggle('slide-preview-mode', currentViewMode === 'slide');
+    document.body.classList.toggle('board-preview-mode', currentViewMode === 'board');
 
     const content = editor.value;
     if (!content) {
@@ -104,13 +101,20 @@ async function updatePreview() {
                 </div>
             `).join('');
 
-            // Apply print layout setting
             const printLayout = localStorage.getItem('printLayout') || '1-up';
-            if (printLayout === '2-up') {
-                document.body.classList.add('print-2-up');
-            } else {
-                document.body.classList.remove('print-2-up');
-            }
+            document.body.classList.toggle('print-2-up', printLayout === '2-up');
+        } else if (currentViewMode === 'board') {
+            const boardHtmls = html.split(/<hr[^>]*>/i);
+            html = `
+                <div class="board-grid">
+                    ${boardHtmls.map((s, i) => `
+                        <div class="board-card">
+                            <div class="markdown-body">${s}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            document.body.classList.remove('print-2-up');
         } else {
             document.body.classList.remove('print-2-up');
         }
@@ -1387,21 +1391,19 @@ document.getElementById('btn-export-images').addEventListener('click', exportSli
 // View Mode Listeners
 const btnViewDoc = document.getElementById('btn-view-doc');
 const btnViewSlide = document.getElementById('btn-view-slide');
+const btnViewBoard = document.getElementById('btn-view-board');
 
-if (btnViewDoc && btnViewSlide) {
-    btnViewDoc.addEventListener('click', () => {
-        currentViewMode = 'doc';
-        btnViewDoc.classList.add('active');
-        btnViewSlide.classList.remove('active');
-        updatePreview();
-    });
-    btnViewSlide.addEventListener('click', () => {
-        currentViewMode = 'slide';
-        btnViewSlide.classList.add('active');
-        btnViewDoc.classList.remove('active');
-        updatePreview();
-    });
+function setActiveView(mode) {
+    currentViewMode = mode;
+    btnViewDoc.classList.toggle('active', mode === 'doc');
+    btnViewSlide.classList.toggle('active', mode === 'slide');
+    btnViewBoard.classList.toggle('active', mode === 'board');
+    updatePreview();
 }
+
+if (btnViewDoc) btnViewDoc.addEventListener('click', () => setActiveView('doc'));
+if (btnViewSlide) btnViewSlide.addEventListener('click', () => setActiveView('slide'));
+if (btnViewBoard) btnViewBoard.addEventListener('click', () => setActiveView('board'));
 
 // Expose for testing
 window.AssetStore = AssetStore;
