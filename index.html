@@ -29,19 +29,10 @@
                 </div>
             </div>
 
-            <!-- 入力/編集 (Edit) Menu -->
+            <!-- 入力 (Input) Menu -->
             <div class="toolbar-group dropdown">
-                <button class="dropdown-trigger" data-i18n="edit"><i class="fas fa-edit"></i> 入力/編集 <i class="fas fa-caret-down"></i></button>
-                <div class="dropdown-content hidden" style="min-width: 300px; padding: 10px;">
-                    <div class="menu-sub-group" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 10px;">
-                        <button data-i18n-title="bold" id="btn-bold"><i class="fas fa-bold"></i></button>
-                        <button data-i18n-title="italic" id="btn-italic"><i class="fas fa-italic"></i></button>
-                        <button data-i18n-title="header" id="btn-header"><i class="fas fa-heading"></i></button>
-                        <button data-i18n-title="list" id="btn-list"><i class="fas fa-list-ul"></i></button>
-                        <button data-i18n-title="link" id="btn-link"><i class="fas fa-link"></i></button>
-                        <button data-i18n-title="quote" id="btn-quote"><i class="fas fa-quote-left"></i></button>
-                        <button data-i18n-title="code" id="btn-code"><i class="fas fa-code"></i></button>
-                    </div>
+                <button class="dropdown-trigger" data-i18n="input"><i class="fas fa-plus-circle"></i> 入力 <i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-content hidden" style="min-width: 250px; padding: 10px;">
                     <div class="menu-sub-group">
                         <select id="mermaid-presets" style="width: 100%; margin-bottom: 5px;">
                             <option value="" data-i18n="mermaid_presets">Mermaid プリセット...</option>
@@ -63,8 +54,8 @@
                             <optgroup data-i18n-label="group_list" label="リスト">
                                 <option value="checklist_3" data-i18n="p_checklist_3">チェックリスト (3個)</option>
                                 <option value="checklist_5" data-i18n="p_checklist_5">チェックリスト (5個)</option>
-                                <option value="bullet_3" data-i18n="p_bullet_3">箇条書き (3個)</option>
-                                <option value="bullet_nested" data-i18n="p_bullet_nested">箇条書き (ネスト)</option>
+                                <option value="bullet_3" data-i18n="p_bullet_3">箇記事 (3個)</option>
+                                <option value="bullet_nested" data-i18n="p_bullet_nested">箇記事 (ネスト)</option>
                             </optgroup>
                             <optgroup data-i18n-label="group_table" label="テーブル">
                                 <option value="table_3x3" data-i18n="p_table_3x3">テーブル (3x3)</option>
@@ -112,6 +103,18 @@
                         <button id="btn-toc" data-i18n="create_toc" style="width: 100%; border: 1px solid var(--border-color);"><i class="fas fa-list-ol"></i> 目次作成</button>
                     </div>
                 </div>
+            </div>
+
+            <!-- 編集 (Format) Button Group -->
+            <div class="toolbar-group">
+                <button data-i18n-title="bold" id="btn-bold"><i class="fas fa-bold"></i></button>
+                <button data-i18n-title="italic" id="btn-italic"><i class="fas fa-italic"></i></button>
+                <button data-i18n-title="header" id="btn-header"><i class="fas fa-heading"></i></button>
+                <button data-i18n-title="p_hr" id="btn-hr"><i class="fas fa-minus"></i></button>
+                <button data-i18n-title="list" id="btn-list"><i class="fas fa-list-ul"></i></button>
+                <button data-i18n-title="link" id="btn-link"><i class="fas fa-link"></i></button>
+                <button data-i18n-title="quote" id="btn-quote"><i class="fas fa-quote-left"></i></button>
+                <button data-i18n-title="code" id="btn-code"><i class="fas fa-code"></i></button>
             </div>
 
             <!-- 表示 (View) Menu -->

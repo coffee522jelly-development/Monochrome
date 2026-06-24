@@ -23,8 +23,8 @@ const translations = {
         group_other: "その他",
         p_checklist_3: "チェックリスト (3個)",
         p_checklist_5: "チェックリスト (5個)",
-        p_bullet_3: "箇条書き (3個)",
-        p_bullet_nested: "箇条書き (ネスト)",
+            p_bullet_3: "箇条書き (3個)",
+            p_bullet_nested: "箇条書き (ネスト)",
         p_table_3x3: "テーブル (3x3)",
         p_table_5x5: "テーブル (5x5)",
         p_table_header_only: "テーブル (ヘッダーのみ)",
@@ -34,7 +34,7 @@ const translations = {
         p_callout_warn: "注釈 (Warning)",
         p_details: "折りたたみ (Details)",
         file: "ファイル",
-        edit: "入力/編集",
+        input: "入力",
         view: "表示",
         settings: "設定",
         save_pdf: "PDF保存",
@@ -159,7 +159,7 @@ const translations = {
             p_callout_warn: "Callout (Warning)",
             p_details: "Details (Folding)",
         file: "File",
-        edit: "Edit",
+        input: "Input",
         view: "View",
         settings: "Settings",
         save_pdf: "Save as PDF",
@@ -254,7 +254,8 @@ const translations = {
         t_qa: "Q&A Session",
         t_case: "Case Study",
         t_update: "Release Notes"
-    },
+    }
+};
 
 const I18n = {
     lang: localStorage.getItem('lang') || (navigator.language.startsWith('ja') ? 'ja' : 'en'),
@@ -708,7 +709,8 @@ const btnMap = {
     'btn-list': ['- ', ''],
     'btn-link': ['[', '](url)'],
     'btn-quote': ['> ', ''],
-    'btn-code': ['`', '`']
+    'btn-code': ['`', '`'],
+    'btn-hr': ['\n---\n', '']
 };
 
 Object.entries(btnMap).forEach(([id, [before, after]]) => {
