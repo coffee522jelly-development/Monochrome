@@ -845,6 +845,27 @@ input[type="range"] {
 .slide-preview-mode .slide-card .mermaid { transform: scale(1.2); }
 .slide-preview-mode .slide-card img { max-height: 70vh !important; width: auto !important; object-fit: contain; }
 
+/* Slide Layout Utilities */
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.grid-2-col > div {
+    width: 100%;
+}
+
+cite {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.8em;
+    color: #888;
+}
+
 #view-mode-group button.active,
 #toolbar button.active {
     background-color: var(--btn-primary-bg);

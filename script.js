@@ -6,33 +6,33 @@ let mermaidCounter = 0;
 
 const translations = {
     ja: {
-            p_flowchart: "フローチャート",
-            p_sequence: "シーケンス図",
-            p_gantt: "ガントチャート",
-            p_class: "クラス図",
-            p_state: "状態遷移図",
-            p_er: "ER図",
-            p_pie: "パイチャート",
-            p_journey: "ユーザージャーニー",
-            p_git: "Gitグラフ",
-            p_mindmap: "マインドマップ",
-            p_timeline: "タイムライン",
-            p_quadrant: "クアドラントチャート",
-            group_list: "リスト",
-            group_table: "テーブル",
-            group_other: "その他",
-            p_checklist_3: "チェックリスト (3個)",
-            p_checklist_5: "チェックリスト (5個)",
-            p_bullet_3: "箇条書き (3個)",
-            p_bullet_nested: "箇条書き (ネスト)",
-            p_table_3x3: "テーブル (3x3)",
-            p_table_5x5: "テーブル (5x5)",
-            p_table_header_only: "テーブル (ヘッダーのみ)",
-            p_hr: "水平線 (HR)",
-            p_math: "数式ブロック (LaTeX)",
-            p_callout_info: "注釈 (Info)",
-            p_callout_warn: "注釈 (Warning)",
-            p_details: "折りたたみ (Details)",
+        p_flowchart: "フローチャート",
+        p_sequence: "シーケンス図",
+        p_gantt: "ガントチャート",
+        p_class: "クラス図",
+        p_state: "状態遷移図",
+        p_er: "ER図",
+        p_pie: "パイチャート",
+        p_journey: "ユーザージャーニー",
+        p_git: "Gitグラフ",
+        p_mindmap: "マインドマップ",
+        p_timeline: "タイムライン",
+        p_quadrant: "クアドラントチャート",
+        group_list: "リスト",
+        group_table: "テーブル",
+        group_other: "その他",
+        p_checklist_3: "チェックリスト (3個)",
+        p_checklist_5: "チェックリスト (5個)",
+        p_bullet_3: "箇条書き (3個)",
+        p_bullet_nested: "箇条書き (ネスト)",
+        p_table_3x3: "テーブル (3x3)",
+        p_table_5x5: "テーブル (5x5)",
+        p_table_header_only: "テーブル (ヘッダーのみ)",
+        p_hr: "水平線 (HR)",
+        p_math: "数式ブロック (LaTeX)",
+        p_callout_info: "注釈 (Info)",
+        p_callout_warn: "注釈 (Warning)",
+        p_details: "折りたたみ (Details)",
         file: "ファイル",
         edit: "入力/編集",
         view: "表示",
@@ -104,7 +104,31 @@ const translations = {
         delete_preset_confirm: "プリセット \"{name}\" を削除しますか？",
         sys_preset_no_delete: "システム標準プリセットは削除できません。",
         preset_name_empty: "プリセット名を入力してください。",
-        lang_label: "言語 (Language)"
+        lang_label: "言語 (Language)",
+        slide_layouts: "スライド・レイアウト...",
+        pres_templates: "プレゼン・テンプレート...",
+        group_layouts: "レイアウト",
+        l_title: "タイトルスライド",
+        l_2col: "2カラム (左右分割)",
+        l_img_text: "画像 + 説明",
+        l_focus_mermaid: "図面フォーカス",
+        l_code: "コード強調",
+        l_quote: "強調引用",
+        l_timeline: "タイムライン",
+        l_checklist: "チェックリスト",
+        l_quad: "クアドラント",
+        l_closing: "クロージング",
+        group_structs: "構成テンプレート",
+        t_pitch: "ピッチデック",
+        t_project: "プロジェクト提案",
+        t_system: "システム設計書",
+        t_roadmap: "ロードマップ",
+        t_lecture: "講義/チュートリアル",
+        t_report: "月次報告書",
+        t_brainstorm: "ブレインストーミング",
+        t_qa: "Q&Aセッション",
+        t_case: "ケーススタディ",
+        t_update: "リリースノート"
     },
     en: {
             p_flowchart: "Flowchart",
@@ -205,9 +229,32 @@ const translations = {
         delete_preset_confirm: "Delete preset \"{name}\"?",
         sys_preset_no_delete: "System presets cannot be deleted.",
         preset_name_empty: "Please enter a preset name.",
-        lang_label: "Language"
-    }
-};
+        lang_label: "Language",
+        slide_layouts: "Slide Layouts...",
+        pres_templates: "Presentation Templates...",
+        group_layouts: "Layouts",
+        l_title: "Title Slide",
+        l_2col: "2-Column",
+        l_img_text: "Image + Text",
+        l_focus_mermaid: "Focus: Mermaid",
+        l_code: "Code Focus",
+        l_quote: "Big Quote",
+        l_timeline: "Timeline",
+        l_checklist: "Checklist",
+        l_quad: "Quadrant Chart",
+        l_closing: "Closing Slide",
+        group_structs: "Structures",
+        t_pitch: "Pitch Deck",
+        t_project: "Project Proposal",
+        t_system: "System Architecture",
+        t_roadmap: "Product Roadmap",
+        t_lecture: "Lecture/Educational",
+        t_report: "Monthly Report",
+        t_brainstorm: "Brainstorming",
+        t_qa: "Q&A Session",
+        t_case: "Case Study",
+        t_update: "Release Notes"
+    },
 
 const I18n = {
     lang: localStorage.getItem('lang') || (navigator.language.startsWith('ja') ? 'ja' : 'en'),
@@ -724,6 +771,7 @@ const cssPresetStyles = {
     color: #a0c4ff;
     background-color: #001524;
 }
+.slide-card .markdown-body { background-color: transparent; }
 .markdown-body h1, .markdown-body h2 {
     color: #fff;
     border-bottom: 2px solid #577590;
@@ -752,6 +800,7 @@ const cssPresetStyles = {
     padding: 40px !important;
     line-height: 1.8;
 }
+.slide-card .markdown-body { background-color: transparent; padding: 0 !important; }
 .markdown-body h1 {
     text-align: center;
     border-bottom: 2px solid #000;
@@ -780,6 +829,7 @@ const cssPresetStyles = {
     background: #fff;
     line-height: 2;
 }
+.slide-card .markdown-body { background-color: transparent; }
 .markdown-body h1, .markdown-body h2 {
     font-weight: 300;
     border: none;
@@ -798,6 +848,7 @@ const cssPresetStyles = {
     color: #0f0;
     text-shadow: 0 0 5px #0f0;
 }
+.slide-card .markdown-body { background-color: transparent; }
 .markdown-body h1, .markdown-body h2 {
     color: #0f0;
     border-color: #0f0;
@@ -814,6 +865,7 @@ const cssPresetStyles = {
     background: #0d0221;
     color: #00ffcc;
 }
+.slide-card .markdown-body { background-color: transparent; }
 .markdown-body h1 {
     color: #ff00ff;
     text-shadow: 2px 2px #00ffff;
@@ -830,6 +882,7 @@ const cssPresetStyles = {
     background: #002b36;
     color: #839496;
 }
+.slide-card .markdown-body { background-color: transparent; }
 .markdown-body h1, .markdown-body h2 {
     color: #268bd2;
     border-bottom-color: #586e75;
@@ -843,6 +896,7 @@ const cssPresetStyles = {
     color: #d6d3d1;
     line-height: 1.8;
 }
+.slide-card .markdown-body { background-color: transparent; }
 .markdown-body h1, .markdown-body h2 {
     font-family: serif;
     color: #a8a29e;
@@ -858,6 +912,7 @@ const cssPresetStyles = {
     background: #000;
     color: #fff;
 }
+.slide-card .markdown-body { background-color: transparent; }
 .markdown-body h1 {
     color: #fff;
     text-shadow: 0 0 10px #fff, 0 0 20px #f0f, 0 0 30px #f0f;
@@ -873,6 +928,7 @@ const cssPresetStyles = {
     color: #000;
     font-weight: bold;
 }
+.slide-card .markdown-body { background-color: transparent; }
 .markdown-body h1, .markdown-body h2 {
     background: #000;
     color: #fff;
@@ -1083,7 +1139,58 @@ function handleMdSelection() {
 if (mermaidPresets) mermaidPresets.addEventListener('change', handleMermaidSelection);
 if (mdPresets) mdPresets.addEventListener('change', handleMdSelection);
 
+const layoutPresets = document.getElementById('slide-layouts');
+const structPresets = document.getElementById('pres-templates');
+
+function handleLayoutSelection() {
+    const val = layoutPresets.value;
+    if (val && slideLayouts[val]) {
+        insertAtCursor(slideLayouts[val] + "\n\n---\n\n");
+        layoutPresets.value = "";
+    }
+}
+
+function handleStructSelection() {
+    const val = structPresets.value;
+    if (val && presentationTemplates[val]) {
+        editor.value = presentationTemplates[val];
+        updatePreview();
+        updateStats();
+        autoSave();
+        structPresets.value = "";
+    }
+}
+
+if (layoutPresets) layoutPresets.addEventListener('change', handleLayoutSelection);
+if (structPresets) structPresets.addEventListener('change', handleStructSelection);
+
 // Markdown templates (Localized)
+const slideLayouts = {
+    l_title: "# プレゼンテーション・タイトル\n## サブタイトルまたは発表者名\n### 2024年X月X日",
+    l_2col: "# 左右分割レイアウト\n\n<div class=\"grid-2-col\">\n<div>\n\n### 左カラム\n- 項目 A\n- 項目 B\n- 項目 C\n\n</div>\n<div>\n\n### 右カラム\n- 詳細 1\n- 詳細 2\n- 詳細 3\n\n</div>\n</div>",
+    l_img_text: "# 画像と説明のレイアウト\n\n<div class=\"grid-2-col\">\n<div>\n\n![サンプル画像](https://via.placeholder.com/600x400)\n\n</div>\n<div>\n\n### 解説\nここに画像の詳しい説明や、注目すべきポイントを記述します。箇条書きも利用可能です。\n\n</div>\n</div>",
+    l_focus_mermaid: "# 図面フォーカス・レイアウト\n\n```mermaid\ngraph TD\n    Start --> Process\n    Process --> End\n```\n\n> 上記の図は、主要なワークフローを示しています。",
+    l_code: "# コード強調レイアウト\n\n```javascript\n// サンプルコード\nfunction helloWorld() {\n    console.log(\"Hello, CAD-MD!\");\n}\n```\n\n- 実装のポイント 1\n- 実装のポイント 2",
+    l_quote: "# 強調引用レイアウト\n\n<div style=\"text-align:center; padding: 40px;\">\n\n> \"複雑なものをシンプルにすることは、世界で最も難しいことの一つだ。\"\n\n<cite>— スティーブ・ジョブズ</cite>\n\n</div>",
+    l_timeline: "# タイムライン・レイアウト\n\n```mermaid\ntimeline\n    title プロジェクトの歴史\n    2022 : 企画立案 : 市場調査\n    2023 : 開発開始 : ベータ版リリース\n    2024 : 正式リリース : グローバル展開\n```",
+    l_checklist: "# チェックリスト・レイアウト\n\n- [x] マイルストーン 1 完了\n- [x] マイルストーン 2 完了\n- [ ] マイルストーン 3 進行中\n- [ ] 最終評価 予定",
+    l_quad: "# クアドラント分析\n\n```mermaid\nquadrantChart\n    title 優先順位分析\n    x-axis 低コスト --> 高コスト\n    y-axis 低価値 --> 高価値\n    quadrant-1 投資すべき\n    quadrant-2 検討が必要\n    quadrant-3 無視してよい\n    quadrant-4 効率化が必要\n    プロジェクトA: [0.3, 0.8]\n    プロジェクトB: [0.7, 0.4]\n```",
+    l_closing: "# ご清聴ありがとうございました\n\n## 質疑応答 (Q&A)\n\n### 連絡先\n- Email: info@example.com\n- Web: https://example.com"
+};
+
+const presentationTemplates = {
+    t_pitch: "# Startup Pitch Deck\n---\n# Problem\nSolving X for Y users.\n---\n# Solution\nOur platform Z.\n---\n# Market Size\n$10B Opportunity.\n---\n# Business Model\nSaaS Subscription.\n---\n# Team\nExperts in A and B.",
+    t_project: "# プロジェクト提案書\n---\n# 目的\nプロジェクトの背景と達成すべきゴール。\n---\n# スコープ\n実施内容の詳細。\n---\n# スケジュール\n2024年第1四半期の予定。\n---\n# 予算\n概算見積もり。",
+    t_system: "# システム構成設計\n---\n# アーキテクチャ\n```mermaid\ngraph LR\n    LB[Load Balancer] --> App1[App Server 1]\n    LB --> App2[App Server 2]\n    App1 --> DB[(Database)]\n    App2 --> DB\n```\n---\n# データベース設計\nテーブル構造とリレーションシップ。\n---\n# セキュリティ\n認証・認可の仕組み。",
+    t_roadmap: "# ロードマップ\n---\n# Q1\nFeature A, B\n---\n# Q2\nFeature C, D\n---\n# Q3\nExpansion",
+    t_lecture: "# 第1講: Markdown基礎\n---\n# Markdownとは？\n軽量マークアップ言語の一つです。\n---\n# 基本的な記法\n# 見出し\n- リスト\n**太字**\n---\n# 実習\n実際に書いてみましょう。",
+    t_report: "# 月次報告 (2024年X月)\n---\n# 今月の成果\n主要KPIの達成状況。\n---\n# 課題と対策\n直面した問題と今後の計画。\n---\n# 来月の目標\n具体的な数値目標。",
+    t_brainstorm: "# アイデア・ブレインストーミング\n---\n# テーマ\n新機能 A について。\n---\n# アイデア 1\n詳細内容...\n---\n# アイデア 2\n詳細内容...",
+    t_qa: "# Q&Aセッション\n---\n# Q1: よくある質問\n回答内容...\n---\n# Q2: 技術的な詳細\n回答内容...",
+    t_case: "# 事例紹介: 株式会社A様\n---\n# 導入前の課題\n効率化が課題だった。\n---\n# 解決策\nCAD-MDエディターの導入。\n---\n# 導入後の効果\n生産性が50%向上。",
+    t_update: "# リリースノート v2.0\n---\n# 新機能\n- ボードモードの追加\n- 多言語対応\n---\n# 改善点\n- PDF出力の安定性向上\n---\n# バグ修正\n- UIの微調整"
+};
+
 const markdownTemplates = {
     checklist_3: '- [ ] 項目 1\n- [ ] 項目 2\n- [ ] 項目 3',
     checklist_5: '- [ ] 項目 1\n- [ ] 項目 2\n- [ ] 項目 3\n- [ ] 項目 4\n- [ ] 項目 5',
