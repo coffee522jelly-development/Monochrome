@@ -4,6 +4,262 @@ const preview = document.getElementById('preview');
 let markdownParser;
 let mermaidCounter = 0;
 
+const translations = {
+    ja: {
+            p_flowchart: "フローチャート",
+            p_sequence: "シーケンス図",
+            p_gantt: "ガントチャート",
+            p_class: "クラス図",
+            p_state: "状態遷移図",
+            p_er: "ER図",
+            p_pie: "パイチャート",
+            p_journey: "ユーザージャーニー",
+            p_git: "Gitグラフ",
+            p_mindmap: "マインドマップ",
+            p_timeline: "タイムライン",
+            p_quadrant: "クアドラントチャート",
+            group_list: "リスト",
+            group_table: "テーブル",
+            group_other: "その他",
+            p_checklist_3: "チェックリスト (3個)",
+            p_checklist_5: "チェックリスト (5個)",
+            p_bullet_3: "箇条書き (3個)",
+            p_bullet_nested: "箇条書き (ネスト)",
+            p_table_3x3: "テーブル (3x3)",
+            p_table_5x5: "テーブル (5x5)",
+            p_table_header_only: "テーブル (ヘッダーのみ)",
+            p_hr: "水平線 (HR)",
+            p_math: "数式ブロック (LaTeX)",
+            p_callout_info: "注釈 (Info)",
+            p_callout_warn: "注釈 (Warning)",
+            p_details: "折りたたみ (Details)",
+        file: "ファイル",
+        edit: "入力/編集",
+        view: "表示",
+        settings: "設定",
+        save_pdf: "PDF保存",
+        save_html: "HTML保存",
+        save_images: "スライド画像保存 (ZIP)",
+        export_portable: "外部保存 (Portable MD)",
+        bold: "太字",
+        italic: "斜体",
+        header: "見出し",
+        list: "リスト",
+        link: "リンク",
+        quote: "引用",
+        code: "コード",
+        mermaid_presets: "Mermaid プリセット...",
+        md_presets: "Markdown プリセット...",
+        create_toc: "目次作成",
+        view_doc: "文書モード",
+        view_slide: "スライドモード",
+        view_board: "ボードモード",
+        start_present: "プレゼン開始",
+        theme_toggle: "テーマ切り替え",
+        settings_title: "外観・フォント設定",
+        css_presets_label: "CSS プリセット",
+        sys_standard: "--- システム標準 ---",
+        user_defined: "--- ユーザー定義 ---",
+        save_as_preset: "新規プリセットとして保存",
+        preset_name_placeholder: "プリセット名を入力...",
+        save: "保存",
+        font_label: "プレビュー用フォント & サイズ",
+        slide_print_label: "スライド印刷設定",
+        print_1up: "標準 (1枚/ページ)",
+        print_2up: "配布資料 (2枚/ページ - A4縦)",
+        css_editor_label: "CSS エディター",
+        css_editor_placeholder: "/* CSSを入力してください */",
+        properties: "プロパティ",
+        no_selection: "選択されていません",
+        alt_text: "代替テキスト (Alt)",
+        alt_placeholder: "画像の説明...",
+        size: "サイズ",
+        alignment: "配置",
+        align_left: "左寄せ",
+        align_center: "中央",
+        align_right: "右寄せ",
+        asset_id: "アセットID",
+        lines: "行",
+        words: "単語",
+        chars: "文字",
+        saving: "保存中...",
+        saved: "保存済み",
+        help: "ヘルプ",
+        shortcuts_title: "キーボードショートカット",
+        shortcut_bold: "太字",
+        shortcut_italic: "斜体",
+        shortcut_undo: "元に戻す (Undo)",
+        shortcut_redo: "やり直し (Redo)",
+        shortcut_pdf: "PDF保存",
+        shortcut_tab: "4スペース挿入",
+        shortcut_md_drop: "Markdownインポート",
+        shortcut_img_drop: "画像インポート",
+        gen_images: "画像生成中...",
+        gen_images_progress: "画像生成中 ({curr}/{total})...",
+        export_failed: "画像のエクスポートに失敗しました。詳細はコンソールを確認してください。",
+        editor_not_ready: "エディターがまだ準備できていません。",
+        no_slides_to_export: "エクスポートするスライドがありません。",
+        toc_title: "目次",
+        toc_error: "目次を作成するには、## 以上の見出しが必要です。",
+        delete_preset_confirm: "プリセット \"{name}\" を削除しますか？",
+        sys_preset_no_delete: "システム標準プリセットは削除できません。",
+        preset_name_empty: "プリセット名を入力してください。",
+        lang_label: "言語 (Language)"
+    },
+    en: {
+            p_flowchart: "Flowchart",
+            p_sequence: "Sequence Diagram",
+            p_gantt: "Gantt Chart",
+            p_class: "Class Diagram",
+            p_state: "State Diagram",
+            p_er: "ER Diagram",
+            p_pie: "Pie Chart",
+            p_journey: "User Journey",
+            p_git: "Git Graph",
+            p_mindmap: "Mindmap",
+            p_timeline: "Timeline",
+            p_quadrant: "Quadrant Chart",
+            group_list: "List",
+            group_table: "Table",
+            group_other: "Other",
+            p_checklist_3: "Checklist (3)",
+            p_checklist_5: "Checklist (5)",
+            p_bullet_3: "Bullet List (3)",
+            p_bullet_nested: "Nested List",
+            p_table_3x3: "Table (3x3)",
+            p_table_5x5: "Table (5x5)",
+            p_table_header_only: "Table (Header only)",
+            p_hr: "Horizontal Rule",
+            p_math: "Math Block (LaTeX)",
+            p_callout_info: "Callout (Info)",
+            p_callout_warn: "Callout (Warning)",
+            p_details: "Details (Folding)",
+        file: "File",
+        edit: "Edit",
+        view: "View",
+        settings: "Settings",
+        save_pdf: "Save as PDF",
+        save_html: "Save as HTML",
+        save_images: "Save Slides as Images (ZIP)",
+        export_portable: "Export Portable MD",
+        bold: "Bold",
+        italic: "Italic",
+        header: "Heading",
+        list: "List",
+        link: "Link",
+        quote: "Quote",
+        code: "Code",
+        mermaid_presets: "Mermaid Presets...",
+        md_presets: "Markdown Presets...",
+        create_toc: "Create TOC",
+        view_doc: "Document Mode",
+        view_slide: "Slide Mode",
+        view_board: "Board Mode",
+        start_present: "Start Presentation",
+        theme_toggle: "Toggle Theme",
+        settings_title: "Appearance & Font Settings",
+        css_presets_label: "CSS Presets",
+        sys_standard: "--- System Standard ---",
+        user_defined: "--- User Defined ---",
+        save_as_preset: "Save as New Preset",
+        preset_name_placeholder: "Enter preset name...",
+        save: "Save",
+        font_label: "Preview Font & Size",
+        slide_print_label: "Slide Print Settings",
+        print_1up: "Standard (1 slide/page)",
+        print_2up: "Handout (2 slides/page - A4 Portrait)",
+        css_editor_label: "CSS Editor",
+        css_editor_placeholder: "/* Enter CSS here */",
+        properties: "Properties",
+        no_selection: "No selection",
+        alt_text: "Alt Text",
+        alt_placeholder: "Image description...",
+        size: "Size",
+        alignment: "Alignment",
+        align_left: "Left",
+        align_center: "Center",
+        align_right: "Right",
+        asset_id: "Asset ID",
+        lines: "Lines",
+        words: "Words",
+        chars: "Chars",
+        saving: "Saving...",
+        saved: "Saved",
+        help: "Help",
+        shortcuts_title: "Keyboard Shortcuts",
+        shortcut_bold: "Bold",
+        shortcut_italic: "Italic",
+        shortcut_undo: "Undo",
+        shortcut_redo: "Redo",
+        shortcut_pdf: "Save PDF",
+        shortcut_tab: "Insert 4 spaces",
+        shortcut_md_drop: "Markdown Import",
+        shortcut_img_drop: "Image Import",
+        gen_images: "Generating images...",
+        gen_images_progress: "Generating images ({curr}/{total})...",
+        export_failed: "Image export failed. Check console for details.",
+        editor_not_ready: "Editor is not ready yet.",
+        no_slides_to_export: "No slides to export.",
+        toc_title: "Table of Contents",
+        toc_error: "Header (## or higher) is required to create a TOC.",
+        delete_preset_confirm: "Delete preset \"{name}\"?",
+        sys_preset_no_delete: "System presets cannot be deleted.",
+        preset_name_empty: "Please enter a preset name.",
+        lang_label: "Language"
+    }
+};
+
+const I18n = {
+    lang: localStorage.getItem('lang') || (navigator.language.startsWith('ja') ? 'ja' : 'en'),
+    t(key) {
+        return translations[this.lang][key] || key;
+    },
+    setLang(lang) {
+        this.lang = lang;
+        localStorage.setItem('lang', lang);
+        this.updateUI();
+    },
+    updateUI() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (el.tagName === 'INPUT' && el.type === 'text') {
+                 el.placeholder = this.t(key);
+            } else if (el.tagName === 'TEXTAREA') {
+                 el.placeholder = this.t(key);
+            } else {
+                 // Check if it has an icon child
+                 const icon = el.querySelector('i');
+                 if (icon) {
+                     // Keep icon, update text node
+                     const textNode = Array.from(el.childNodes).find(n => n.nodeType === Node.TEXT_NODE);
+                     if (textNode) {
+                         textNode.textContent = ' ' + this.t(key);
+                     } else {
+                         el.appendChild(document.createTextNode(' ' + this.t(key)));
+                     }
+                 } else {
+                     el.textContent = this.t(key);
+                 }
+            }
+        });
+
+        document.querySelectorAll('[data-i18n-label]').forEach(el => {
+            el.label = this.t(el.getAttribute('data-i18n-label'));
+        });
+
+        // Update tooltips if needed
+        document.querySelectorAll('[data-i18n-title]').forEach(el => {
+            el.title = this.t(el.getAttribute('data-i18n-title'));
+        });
+
+        // Localize presets specifically if they have text
+        document.getElementById('editor').placeholder = this.lang === 'ja' ? '入力を待機中...' : 'Waiting for input...';
+
+        updateStats();
+        updatePreview();
+    }
+};
+
 // Asset Store for images
 const AssetStore = {
     assets: new Map(),
@@ -190,7 +446,7 @@ if (savedAssets) {
 initMermaid().then(() => {
     setTheme(savedTheme);
     loadMarkdownWasm();
-    updateStats();
+    I18n.updateUI(); // Initial translation
 });
 
 if (btnTheme) {
@@ -700,12 +956,12 @@ const btnSaveCss = document.getElementById('btn-save-preset');
 if (btnSaveCss) {
     btnSaveCss.addEventListener('click', () => {
         const name = document.getElementById('preset-name').value.trim();
-        if (!name) { alert("プリセット名を入力してください。"); return; }
+        if (!name) { alert(I18n.t('preset_name_empty')); return; }
         const css = customCssEditor.value;
         CSSStore.save(name, css);
         document.getElementById('css-presets').value = `user:${name}`;
         localStorage.setItem('lastCssPreset', `user:${name}`);
-        alert(`プリセット "${name}" を保存しました。`);
+        // No alert needed for simple save
     });
 }
 
@@ -713,9 +969,9 @@ const btnDeleteCss = document.getElementById('btn-delete-preset');
 if (btnDeleteCss) {
     btnDeleteCss.addEventListener('click', () => {
         const val = document.getElementById('css-presets').value;
-        if (!val.startsWith('user:')) { alert("システム標準プリセットは削除できません。"); return; }
+        if (!val.startsWith('user:')) { alert(I18n.t('sys_preset_no_delete')); return; }
         const name = val.replace('user:', '');
-        if (confirm(`プリセット "${name}" を削除しますか？`)) {
+        if (confirm(I18n.t('delete_preset_confirm').replace('{name}', name))) {
             CSSStore.delete(name);
             document.getElementById('css-presets').value = "sys:technical";
             document.getElementById('css-presets').dispatchEvent(new Event('change'));
@@ -910,7 +1166,7 @@ editor.addEventListener('input', () => {
 let saveTimeout;
 function autoSave() {
     const saveStatus = document.getElementById('save-status');
-    saveStatus.textContent = "保存中...";
+    saveStatus.textContent = I18n.t('saving');
     saveStatus.style.opacity = "1";
 
     clearTimeout(saveTimeout);
@@ -920,7 +1176,7 @@ function autoSave() {
         AssetStore.assets.forEach((v, k) => assetObj[k] = v);
         localStorage.setItem('assetStore', JSON.stringify(assetObj));
 
-        saveStatus.textContent = "保存済み";
+        saveStatus.textContent = I18n.t('saved');
         saveStatus.style.opacity = "0.7";
     }, 1000);
 }
@@ -943,7 +1199,7 @@ if (btnToc) {
     btnToc.addEventListener('click', () => {
         const text = editor.value;
         const lines = text.split('\n');
-        let toc = "\n## 目次\n\n";
+        let toc = `\n## ${I18n.t('toc_title')}\n\n`;
         let count = 0;
 
         lines.forEach(line => {
@@ -960,7 +1216,7 @@ if (btnToc) {
         if (count > 0) {
             insertAtCursor(toc + "\n");
         } else {
-            alert("目次を作成するには、## 以上の見出しが必要です。");
+            alert(I18n.t('toc_error'));
         }
     });
 }
@@ -1285,7 +1541,7 @@ document.getElementById('btn-export-html').addEventListener('click', exportStand
 // Image Export Logic
 async function exportSlidesAsImages() {
     if (!markdownParser) {
-        alert("エディターがまだ準備できていません。");
+        alert(I18n.t('editor_not_ready'));
         return;
     }
 
@@ -1329,7 +1585,9 @@ async function exportSlidesAsImages() {
         const slideMarkdowns = content.split(/\n\s*---\s*\n/);
 
         for (let i = 0; i < slideMarkdowns.length; i++) {
-            saveStatus.textContent = `画像生成中 (${i + 1}/${slideMarkdowns.length})...`;
+            saveStatus.textContent = I18n.t('gen_images_progress')
+                .replace('{curr}', i + 1)
+                .replace('{total}', slideMarkdowns.length);
 
             // Parse this slide's markdown
             const processedMd = preprocessMarkdown(slideMarkdowns[i]);
@@ -1384,7 +1642,7 @@ async function exportSlidesAsImages() {
 
     } catch (err) {
         console.error("Image export failed:", err);
-        alert("画像のエクスポートに失敗しました。詳細はコンソールを確認してください。\n" + err.message);
+        alert(I18n.t('export_failed') + "\n" + err.message);
     } finally {
         document.body.removeChild(container);
         saveStatus.textContent = originalStatus;
@@ -1410,6 +1668,14 @@ function setActiveView(mode) {
 if (btnViewDoc) btnViewDoc.addEventListener('click', () => setActiveView('doc'));
 if (btnViewSlide) btnViewSlide.addEventListener('click', () => setActiveView('slide'));
 if (btnViewBoard) btnViewBoard.addEventListener('click', () => setActiveView('board'));
+
+const langSelector = document.getElementById('lang-selector');
+if (langSelector) {
+    langSelector.value = I18n.lang;
+    langSelector.addEventListener('change', (e) => {
+        I18n.setLang(e.target.value);
+    });
+}
 
 // Expose for testing
 window.AssetStore = AssetStore;
