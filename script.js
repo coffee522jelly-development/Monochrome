@@ -273,7 +273,7 @@ const translations = {
 };
 
 const cssPresetStyles = {
-    'sys:technical': `/* TECHNICAL (CAD) */
+    'sys:technical': `/* TECHNICAL (エンジニアリング) */
 .markdown-body { font-family: var(--preview-font); color: var(--text-color); }
 .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 {
     border-bottom: 1px solid var(--border-color); text-transform: uppercase; font-weight: normal; padding-bottom: 0.2em;
@@ -332,7 +332,7 @@ const slideLayouts = {
     l_2col: "# 左右分割レイアウト\n\n<div class=\"grid-2-col\">\n<div>\n\n### 左カラム\n- 項目 A\n- 項目 B\n- 項目 C\n\n</div>\n<div>\n\n### 右カラム\n- 詳細 1\n- 詳細 2\n- 詳細 3\n\n</div>\n</div>",
     l_img_text: "# 画像と説明のレイアウト\n\n<div class=\"grid-2-col\">\n<div>\n\n![サンプル画像](https://via.placeholder.com/600x400)\n\n</div>\n<div>\n\n### 解説\nここに画像の詳しい説明や、注目すべきポイントを記述します。箇条書きも利用可能です。\n\n</div>\n</div>",
     l_focus_mermaid: "# 図面フォーカス・レイアウト\n\n```mermaid\ngraph TD\n    Start --> Process\n    Process --> End\n```\n\n> 上記の図は、主要なワークフローを示しています。",
-    l_code: "# コード強調レイアウト\n\n```javascript\n// サンプルコード\nfunction helloWorld() {\n    console.log(\"Hello, CAD-MD!\");\n}\n```\n\n- 実装のポイント 1\n- 実装のポイント 2",
+    l_code: "# コード強調レイアウト\n\n```javascript\n// サンプルコード\nfunction helloWorld() {\n    console.log(\"Hello, TECH-MD!\");\n}\n```\n\n- 実装のポイント 1\n- 実装のポイント 2",
     l_quote: "# 強調引用レイアウト\n\n<div style=\"text-align:center; padding: 40px;\">\n\n> \"複雑なものをシンプルにすることは、世界で最も難しいことの一つだ。\"\n\n<cite>— スティーブ・ジョブズ</cite>\n\n</div>",
     l_timeline: "# タイムライン・レイアウト\n\n```mermaid\ntimeline\n    title プロジェクトの歴史\n    2022 : 企画立案 : 市場調査\n    2023 : 開発開始 : ベータ版リリース\n    2024 : 正式リリース : グローバル展開\n```",
     l_checklist: "# チェックリスト・レイアウト\n\n- [x] マイルストーン 1 完了\n- [x] マイルストーン 2 完了\n- [ ] マイルストーン 3 進行中\n- [ ] 最終評価 予定",
@@ -349,7 +349,7 @@ const presentationTemplates = {
     t_report: "# 月次報告 (2024年X月)\n---\n# 今月の成果\n主要KPIの達成状況。\n---\n# 課題と対策\n直面した問題と今後の計画。\n---\n# 来月の目標\n具体的な数値目標。",
     t_brainstorm: "# アイデア・ブレインストーミング\n---\n# テーマ\n新機能 A について。\n---\n# アイデア 1\n詳細内容...\n---\n# アイデア 2\n詳細内容...",
     t_qa: "# Q&Aセッション\n---\n# Q1: よくある質問\n回答内容...\n---\n# Q2: 技術的な詳細\n回答内容...",
-    t_case: "# 事例紹介: 株式会社A様\n---\n# 導入前の課題\n効率化が課題だった。\n---\n# 解決策\nCAD-MDエディターの導入。\n---\n# 導入後の効果\n生産性が50%向上。",
+    t_case: "# 事例紹介: 株式会社A様\n---\n# 導入前の課題\n効率化が課題だった。\n---\n# 解決策\nTECH-MDエディターの導入。\n---\n# 導入後の効果\n生産性が50%向上。",
     t_update: "# リリースノート v2.0\n---\n# 新機能\n- ボードモードの追加\n- 多言語対応\n---\n# 改善点\n- PDF出力の安定性向上\n---\n# バグ修正\n- UIの微調整"
 };
 
@@ -1002,7 +1002,7 @@ document.getElementById('btn-exit-present').onclick = () => {
 };
 
 async function exportStandaloneHTML() {
-    const title = "CAD-MD: " + (document.querySelector('h1')?.textContent || "Document");
+    const title = "TECH-MD: " + (document.querySelector('h1')?.textContent || "Document");
     const css = Array.from(document.styleSheets).map(s => { try { return Array.from(s.cssRules).map(r => r.cssText).join('\n'); } catch(e) { return ''; }}).join('\n') + '\n' + document.getElementById('user-custom-css').textContent;
     const body = preview.innerHTML;
     const overlay = document.getElementById('presentation-overlay').outerHTML;

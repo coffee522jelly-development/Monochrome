@@ -1,6 +1,6 @@
-# CAD-MD EDITOR (Ultimate Edition)
+# TECH-MD EDITOR (Ultimate Edition)
 
-`markdown-wasm` を使用した、高速で高機能なエンジニアリング向け「CAD風」Markdownエディターです。
+`markdown-wasm` を使用した、高速で高機能なエンジニアリング向けMarkdownエディターです。
 文書作成、スライド作成、ダッシュボード表示、そして高度な図面作成をこれ一つで完結させます。
 
 ## 主要機能
@@ -31,7 +31,7 @@ WebAssembly版のMarkdownパーサー（`markdown-wasm`）を採用。大規模�
 
 ### 6. カスタマイズとUX
 - **16種類のフォント & サイズ調整:** JetBrains Mono, Fira Code, Noto Sans JPなど。
-- **10種類の外観プリセット:** TECHNICAL (CAD), BLUEPRINT, RETRO TERMINAL, CYBERPUNK, SOLARIZED など。
+- **10種類の外観プリセット:** TECHNICAL (エンジニアリング), BLUEPRINT, RETRO TERMINAL, CYBERPUNK, SOLARIZED など。
 - **日英完全対応 (I18n):** UI、メニュー、ツールチップ、テンプレートまですべて日本語と英語を切り替え可能。
 - **生産性機能:** Undo/Redo (Ctrl+Z) への完全対応、オートセーブ、TOC（目次）生成、オートペアリング。
 

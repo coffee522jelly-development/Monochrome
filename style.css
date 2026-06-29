@@ -65,7 +65,7 @@ body, html {
 
 .toolbar-group {
     display: flex;
-    gap: 0; /* Tight grouping like CAD */
+    gap: 0; /* Tight grouping technical style */
     align-items: center;
     border-right: 1px solid var(--border-color);
 }
@@ -273,7 +273,7 @@ optgroup {
     margin-right: 8px;
 }
 
-/* Mermaid CAD Style */
+/* Mermaid Technical Style */
 .mermaid {
     display: flex;
     justify-content: center;
