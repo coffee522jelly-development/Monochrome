@@ -74,6 +74,16 @@ const translations = {
         settings_title: "外観・フォント設定",
         css_presets_label: "CSS プリセット",
         sys_standard: "--- システム標準 ---",
+        p_technical: "TECHNICAL (テクニカル)",
+        p_corporate: "CORPORATE (コーポレート)",
+        p_modern_dark: "MODERN DARK (モダン・ダーク)",
+        p_startup: "STARTUP (スタートアップ)",
+        p_blueprint: "BLUEPRINT (設計図)",
+        p_paper: "PAPER (報告書・白)",
+        p_minimal: "CLEAN MINIMAL (シンプル・ミニマル)",
+        p_solarized: "SOLARIZED (落ち着いた配色)",
+        p_academia: "DARK ACADEMIA (アカデミック)",
+        p_contrast: "HIGH CONTRAST (高コントラスト)",
         user_defined: "--- ユーザー定義 ---",
         save_as_preset: "新規プリセットとして保存",
         preset_name_placeholder: "プリセット名を入力...",
@@ -199,6 +209,16 @@ const translations = {
         settings_title: "Appearance & Font Settings",
         css_presets_label: "CSS Presets",
         sys_standard: "--- System Standard ---",
+        p_technical: "TECHNICAL (Engineering)",
+        p_corporate: "CORPORATE (Simple/Business)",
+        p_modern_dark: "MODERN DARK (Sleek/Dark)",
+        p_startup: "STARTUP (Casual/Modern)",
+        p_blueprint: "BLUEPRINT (Engineering Blue)",
+        p_paper: "PAPER (White Report)",
+        p_minimal: "CLEAN MINIMAL (Modern/Simple)",
+        p_solarized: "SOLARIZED (Subtle/Dark)",
+        p_academia: "DARK ACADEMIA (Serif/Dark)",
+        p_contrast: "HIGH CONTRAST (Accessibility)",
         user_defined: "--- User Defined ---",
         save_as_preset: "Save as New Preset",
         preset_name_placeholder: "Enter preset name...",
@@ -292,21 +312,24 @@ const cssPresetStyles = {
     'sys:minimal': `/* CLEAN MINIMAL */
 .markdown-body { font-family: var(--preview-font); max-width: 800px; margin: 0 auto; color: #333; background: #fff; line-height: 2; }
 .markdown-body h1, .markdown-body h2 { font-weight: 300; border: none; text-align: center; }`,
-    'sys:terminal': `/* RETRO TERMINAL */
-.markdown-body { font-family: var(--preview-font); background: #0a0a0a; color: #0f0; text-shadow: 0 0 5px #0f0; }
-.markdown-body code { background: #000; color: #0f0; border: 1px solid #0f0; }`,
-    'sys:cyberpunk': `/* NEON CYBERPUNK */
-.markdown-body { font-family: var(--preview-font); background: #0d0221; color: #00ffcc; }
-.markdown-body h1 { color: #ff00ff; text-shadow: 2px 2px #00ffff; border-bottom: 3px double #ff00ff; }`,
+    'sys:corporate': `/* CORPORATE (SIMPLE) */
+.markdown-body { font-family: var(--preview-font); color: #222; background: #fff; line-height: 1.6; }
+.markdown-body h1, .markdown-body h2 { color: #003366; border-bottom: 2px solid #003366; }
+.markdown-body table th { background-color: #f2f2f2; color: #003366; }`,
+    'sys:modern_dark': `/* MODERN DARK */
+.markdown-body { font-family: var(--preview-font); color: #e0e0e0; background: #1a1c1e; }
+.markdown-body h1, .markdown-body h2 { color: #fff; border-bottom: 1px solid #333; }
+.markdown-body code { background: #2d2d2d; color: #4a9eff; }`,
+    'sys:startup': `/* STARTUP (CASUAL MODERN) */
+.markdown-body { font-family: var(--preview-font); color: #333; background: #fdfdfd; }
+.markdown-body h1 { color: #6366f1; border: none; }
+.markdown-body h2 { color: #4f46e5; border-bottom: 1px solid #e5e7eb; }`,
     'sys:solarized': `/* SOLARIZED DARK */
 .markdown-body { font-family: var(--preview-font); background: #002b36; color: #839496; }
 .markdown-body h1, .markdown-body h2 { color: #268bd2; border-bottom-color: #586e75; }`,
     'sys:academia': `/* DARK ACADEMIA */
 .markdown-body { font-family: var(--preview-font); background: #1c1917; color: #d6d3d1; line-height: 1.8; }
 .markdown-body h1, .markdown-body h2 { font-family: serif; color: #a8a29e; border-bottom-color: #444; }`,
-    'sys:neon': `/* NEON NIGHT */
-.markdown-body { font-family: var(--preview-font); background: #000; color: #fff; }
-.markdown-body h1 { color: #fff; text-shadow: 0 0 10px #fff, 0 0 20px #f0f, 0 0 30px #f0f; }`,
     'sys:contrast': `/* HIGH CONTRAST */
 .markdown-body { font-family: var(--preview-font); background: #fff; color: #000; font-weight: bold; }
 .markdown-body h1, .markdown-body h2 { background: #000; color: #fff; padding: 10px; }`

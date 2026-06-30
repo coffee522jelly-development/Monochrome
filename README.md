@@ -31,7 +31,7 @@ WebAssembly版のMarkdownパーサー（`markdown-wasm`）を採用。大規模�
 
 ### 6. カスタマイズとUX
 - **16種類のフォント & サイズ調整:** JetBrains Mono, Fira Code, Noto Sans JPなど。
-- **10種類の外観プリセット:** TECHNICAL (エンジニアリング), BLUEPRINT, RETRO TERMINAL, CYBERPUNK, SOLARIZED など。
+- **10種類の外観プリセット:** TECHNICAL (エンジニアリング), CORPORATE, MODERN DARK, STARTUP, BLUEPRINT, PAPER など。ビジネス・技術用途に最適なスタイルを厳選。
 - **日英完全対応 (I18n):** UI、メニュー、ツールチップ、テンプレートまですべて日本語と英語を切り替え可能。
 - **生産性機能:** Undo/Redo (Ctrl+Z) への完全対応、オートセーブ、TOC（目次）生成、オートペアリング。
 
