@@ -1,0 +1,52 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "TECH-MD-EDITOR",
+  "version": "1.0.0",
+  "identifier": "com.techmd.editor",
+  "build": {
+    "frontendDist": "..",
+    "devUrl": null,
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "TECH-MD EDITOR",
+        "width": 1200,
+        "height": 800,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "languages": ["Japanese"],
+        "displayLanguageSelector": true,
+        "compression": "lzma",
+        "installerIcon": "icons/icon.ico",
+        "installMode": "perMachine"
+      },
+      "wix": {
+        "language": ["ja-JP"],
+        "config": {
+          "template": null
+        }
+      }
+    }
+  }
+}

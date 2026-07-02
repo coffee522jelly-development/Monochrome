@@ -1,0 +1,14 @@
+{
+  "name": "tech-md-editor",
+  "version": "1.0.0",
+  "description": "High Performance Markdown & Mermaid Editor",
+  "main": "index.html",
+  "scripts": {
+    "tauri": "tauri",
+    "build": "echo 'No build step required for static files'",
+    "desktop": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.1.0"
+  }
+}

@@ -46,8 +46,20 @@ WebAssembly版のMarkdownパーサー（`markdown-wasm`）を採用。大規模�
 - `Tab`: 4スペース挿入
 - `選択 + ( / [ / { / " / ' / ` `: 選択範囲を囲む
 
+## デスクトップ版のビルド (Tauri)
+
+本アプリは Tauri を使用してデスクトップアプリとしてビルド可能です。Windows用の日本語インストーラー（MSI/NSIS）に対応しています。
+
+### ビルド手順
+1. Rust環境のセットアップ
+2. 依存関係のインストール: `npm install`
+3. ビルド実行: `npm run desktop`
+
+ビルドされたインストーラーは `src-tauri/target/release/bundle/` 内に生成されます。
+
 ## 使用テクノロジー
 
+- **デスクトップ・フレームワーク:** [Tauri v2](https://tauri.app/)
 - **Markdown パーサー:** [markdown-wasm](https://github.com/rsms/markdown-wasm)
 - **図解エンジン:** [mermaid.js](https://mermaid.js.org/)
 - **画像生成:** [html-to-image](https://github.com/bubkoo/html-to-image)
