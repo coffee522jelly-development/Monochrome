@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECH-MD EDITOR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Fira+Code&family=IBM+Plex+Mono&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Lato&family=Lora&family=Merriweather&family=Noto+Sans+JP:wght@400;700&family=Open+Sans&family=PT+Serif&family=Playfair+Display&family=Press+Start+2P&family=Roboto+Mono&family=Roboto:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
+    <style id="user-custom-css"></style>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-wasm@1.2.0/dist/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header id="toolbar">
+            <!-- ファイル (File) Menu -->
+            <div class="toolbar-group dropdown">
+                <button class="dropdown-trigger" data-i18n="file"><i class="fas fa-file"></i> ファイル <i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-content hidden">
+                    <button id="btn-print" data-i18n="save_pdf"><i class="fas fa-file-pdf"></i> PDF保存</button>
+                    <button id="btn-export-html" data-i18n="save_html"><i class="fas fa-code"></i> HTML保存</button>
+                    <button id="btn-export-images" data-i18n="save_images"><i class="fas fa-file-image"></i> スライド画像保存 (ZIP)</button>
+                    <button id="btn-export-portable" data-i18n="export_portable"><i class="fas fa-file-export"></i> 外部保存 (Portable MD)</button>
+                </div>
+            </div>
+
+            <!-- 入力 (Input) Menu -->
+            <div class="toolbar-group dropdown">
+                <button class="dropdown-trigger" data-i18n="input"><i class="fas fa-plus-circle"></i> 入力 <i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-content hidden" style="min-width: 250px; padding: 10px;">
+                    <div class="menu-sub-group">
+                        <select id="mermaid-presets" style="width: 100%; margin-bottom: 5px;">
+                            <option value="" data-i18n="mermaid_presets">Mermaid プリセット...</option>
+                            <option value="flowchart" data-i18n="p_flowchart">フローチャート</option>
+                            <option value="sequence" data-i18n="p_sequence">シーケンス図</option>
+                            <option value="gantt" data-i18n="p_gantt">ガントチャート</option>
+                            <option value="class" data-i18n="p_class">クラス図</option>
+                            <option value="state" data-i18n="p_state">状態遷移図</option>
+                            <option value="er" data-i18n="p_er">ER図</option>
+                            <option value="pie" data-i18n="p_pie">パイチャート</option>
+                            <option value="journey" data-i18n="p_journey">ユーザージャーニー</option>
+                            <option value="git" data-i18n="p_git">Gitグラフ</option>
+                            <option value="mindmap" data-i18n="p_mindmap">マインドマップ</option>
+                            <option value="timeline" data-i18n="p_timeline">タイムライン</option>
+                            <option value="quadrant" data-i18n="p_quadrant">クアドラントチャート</option>
+                        </select>
+                        <select id="md-presets" style="width: 100%; margin-bottom: 5px;">
+                            <option value="" data-i18n="md_presets">Markdown プリセット...</option>
+                            <optgroup data-i18n-label="group_list" label="リスト">
+                                <option value="checklist_3" data-i18n="p_checklist_3">チェックリスト (3個)</option>
+                                <option value="checklist_5" data-i18n="p_checklist_5">チェックリスト (5個)</option>
+                                <option value="bullet_3" data-i18n="p_bullet_3">箇記事 (3個)</option>
+                                <option value="bullet_nested" data-i18n="p_bullet_nested">箇記事 (ネスト)</option>
+                            </optgroup>
+                            <optgroup data-i18n-label="group_table" label="テーブル">
+                                <option value="table_3x3" data-i18n="p_table_3x3">テーブル (3x3)</option>
+                                <option value="table_5x5" data-i18n="p_table_5x5">テーブル (5x5)</option>
+                                <option value="table_header_only" data-i18n="p_table_header_only">テーブル (ヘッダーのみ)</option>
+                            </optgroup>
+                            <optgroup data-i18n-label="group_other" label="その他">
+                                <option value="hr" data-i18n="p_hr">水平線 (HR)</option>
+                                <option value="math" data-i18n="p_math">数式ブロック (LaTeX)</option>
+                                <option value="callout_info" data-i18n="p_callout_info">注釈 (Info)</option>
+                                <option value="callout_warn" data-i18n="p_callout_warn">注釈 (Warning)</option>
+                                <option value="details" data-i18n="p_details">折りたたみ (Details)</option>
+                            </optgroup>
+                        </select>
+                        <select id="slide-layouts" style="width: 100%; margin-bottom: 5px;">
+                            <option value="" data-i18n="slide_layouts">Slide Layouts...</option>
+                            <optgroup data-i18n-label="group_layouts" label="Layouts">
+                                <option value="l_title" data-i18n="l_title">Title Slide</option>
+                                <option value="l_2col" data-i18n="l_2col">2-Column</option>
+                                <option value="l_img_text" data-i18n="l_img_text">Image + Text</option>
+                                <option value="l_focus_mermaid" data-i18n="l_focus_mermaid">Focus: Mermaid</option>
+                                <option value="l_code" data-i18n="l_code">Code Focus</option>
+                                <option value="l_quote" data-i18n="l_quote">Big Quote</option>
+                                <option value="l_timeline" data-i18n="l_timeline">Timeline</option>
+                                <option value="l_checklist" data-i18n="l_checklist">Checklist</option>
+                                <option value="l_quad" data-i18n="l_quad">Quadrant Chart</option>
+                                <option value="l_closing" data-i18n="l_closing">Closing Slide</option>
+                            </optgroup>
+                        </select>
+                        <select id="pres-templates" style="width: 100%; margin-bottom: 5px;">
+                            <option value="" data-i18n="pres_templates">Presentation Templates...</option>
+                            <optgroup data-i18n-label="group_structs" label="Structures">
+                                <option value="t_pitch" data-i18n="t_pitch">Pitch Deck</option>
+                                <option value="t_project" data-i18n="t_project">Project Proposal</option>
+                                <option value="t_system" data-i18n="t_system">System Architecture</option>
+                                <option value="t_roadmap" data-i18n="t_roadmap">Product Roadmap</option>
+                                <option value="t_lecture" data-i18n="t_lecture">Lecture/Educational</option>
+                                <option value="t_report" data-i18n="t_report">Monthly Report</option>
+                                <option value="t_brainstorm" data-i18n="t_brainstorm">Brainstorming</option>
+                                <option value="t_qa" data-i18n="t_qa">Q&A Session</option>
+                                <option value="t_case" data-i18n="t_case">Case Study</option>
+                                <option value="t_update" data-i18n="t_update">Release Notes</option>
+                            </optgroup>
+                        </select>
+                        <button id="btn-toc" data-i18n="create_toc" style="width: 100%; border: 1px solid var(--border-color);"><i class="fas fa-list-ol"></i> 目次作成</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 編集 (Format) Button Group -->
+            <div class="toolbar-group">
+                <button data-i18n-title="bold" id="btn-bold"><i class="fas fa-bold"></i></button>
+                <button data-i18n-title="italic" id="btn-italic"><i class="fas fa-italic"></i></button>
+                <button data-i18n-title="header" id="btn-header"><i class="fas fa-heading"></i></button>
+                <button data-i18n-title="p_hr" id="btn-hr"><i class="fas fa-minus"></i></button>
+                <button data-i18n-title="list" id="btn-list"><i class="fas fa-list-ul"></i></button>
+                <button data-i18n-title="link" id="btn-link"><i class="fas fa-link"></i></button>
+                <button data-i18n-title="quote" id="btn-quote"><i class="fas fa-quote-left"></i></button>
+                <button data-i18n-title="code" id="btn-code"><i class="fas fa-code"></i></button>
+            </div>
+
+            <!-- 表示 (View) Menu -->
+            <div class="toolbar-group dropdown">
+                <button class="dropdown-trigger" data-i18n="view"><i class="fas fa-desktop"></i> 表示 <i class="fas fa-caret-down"></i></button>
+                <div class="dropdown-content hidden">
+                    <button id="btn-view-doc" data-i18n="view_doc"><i class="fas fa-file-alt"></i> 文書モード</button>
+                    <button id="btn-view-slide" data-i18n="view_slide"><i class="fas fa-desktop"></i> スライドモード</button>
+                    <button id="btn-view-board" data-i18n="view_board"><i class="fas fa-th"></i> ボードモード</button>
+                    <button id="btn-present" data-i18n="start_present"><i class="fas fa-play"></i> プレゼン開始</button>
+                </div>
+            </div>
+
+            <div class="toolbar-group" style="margin-left: auto;">
+                <button data-i18n-title="theme_toggle" id="btn-theme"><i class="fas fa-adjust"></i></button>
+                <button data-i18n-title="settings" id="btn-settings"><i class="fas fa-cog"></i></button>
+            </div>
+        </header>
+
+        <div id="settings-panel" class="hidden">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h3 data-i18n="settings_title">外観・フォント設定</h3>
+                    <button id="btn-close-settings">&times;</button>
+                </div>
+                <div class="settings-body">
+                    <div class="settings-group">
+                        <label data-i18n="lang_label">言語 (Language)</label>
+                        <div class="preset-controls">
+                            <select id="lang-selector" style="flex: 1;">
+                                <option value="ja">日本語 (Japanese)</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="settings-group">
+                        <label data-i18n="css_presets_label">CSS プリセット</label>
+                        <div class="preset-controls">
+                            <select id="css-presets" style="flex: 1;">
+                                <option value="default" data-i18n="sys_standard">--- システム標準 ---</option>
+                                <option value="sys:technical" data-i18n="p_technical">TECHNICAL</option>
+                                <option value="sys:corporate" data-i18n="p_corporate">CORPORATE</option>
+                                <option value="sys:modern_dark" data-i18n="p_modern_dark">MODERN DARK</option>
+                                <option value="sys:startup" data-i18n="p_startup">STARTUP</option>
+                                <option value="sys:blueprint" data-i18n="p_blueprint">BLUEPRINT</option>
+                                <option value="sys:paper" data-i18n="p_paper">PAPER</option>
+                                <option value="sys:minimal" data-i18n="p_minimal">CLEAN MINIMAL</option>
+                                <option value="sys:solarized" data-i18n="p_solarized">SOLARIZED</option>
+                                <option value="sys:academia" data-i18n="p_academia">DARK ACADEMIA</option>
+                                <option value="sys:contrast" data-i18n="p_contrast">HIGH CONTRAST</option>
+                                <option disabled data-i18n="user_defined">--- ユーザー定義 ---</option>
+                            </select>
+                            <button id="btn-delete-preset" title="プリセットを削除" style="background: #a00; color: white;"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="settings-group" style="margin-top: 10px;">
+                        <label data-i18n="save_as_preset">新規プリセットとして保存</label>
+                        <div class="preset-controls">
+                            <input type="text" id="preset-name" data-i18n="preset_name_placeholder" placeholder="プリセット名を入力...">
+                            <button id="btn-save-preset" data-i18n="save" style="background: var(--btn-success-bg); color: white;"><i class="fas fa-save"></i> 保存</button>
+                        </div>
+                    </div>
+                    <div class="settings-group">
+                        <label data-i18n="font_label">プレビュー用フォント & サイズ</label>
+                        <div class="preset-controls">
+                            <select id="font-selector" style="flex: 1;">
+                            <optgroup label="等幅 (Monospace)">
+                                <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+                                <option value="'Fira Code', monospace">Fira Code</option>
+                                <option value="'IBM Plex Mono', monospace">IBM Plex Mono</option>
+                                <option value="'Roboto Mono', monospace">Roboto Mono</option>
+                                <option value="'Space Mono', monospace">Space Mono</option>
+                                <option value="'Courier Prime', monospace">Courier Prime</option>
+                            </optgroup>
+                            <optgroup label="サンセリフ (Sans-Serif)">
+                                <option value="'Inter', sans-serif">Inter</option>
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Noto Sans JP', sans-serif">Noto Sans JP</option>
+                            </optgroup>
+                            <optgroup label="セリフ (Serif)">
+                                <option value="'Lora', serif">Lora</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'PT Serif', serif">PT Serif</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
+                            </optgroup>
+                            <optgroup label="特殊 (Display)">
+                                <option value="'Press Start 2P', cursive">Press Start 2P (Retro)</option>
+                            </optgroup>
+                        </select>
+                        <input type="number" id="font-size-input" value="14" min="8" max="48" style="width: 60px;">
+                        </div>
+                    </div>
+                    <div class="settings-group">
+                        <label data-i18n="slide_print_label">スライド印刷設定</label>
+                        <div class="preset-controls">
+                            <select id="print-layout-selector" style="flex: 1;">
+                                <option value="1-up" data-i18n="print_1up">標準 (1枚/ページ)</option>
+                                <option value="2-up" data-i18n="print_2up">配布資料 (2枚/ページ - A4縦)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="settings-group">
+                        <label data-i18n="css_editor_label">CSS エディター</label>
+                        <textarea id="custom-css-editor" data-i18n="css_editor_placeholder" spellcheck="false" placeholder="/* CSSを入力してください */"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <main id="main-container">
+            <div id="editor-container">
+                <textarea id="editor" spellcheck="false" placeholder="入力を待機中..."></textarea>
+            </div>
+            <div id="preview-container">
+                <div id="preview" class="markdown-body"></div>
+            </div>
+            <aside id="properties-sidebar">
+                <div class="sidebar-header">
+                    <span data-i18n="properties">プロパティ</span>
+                </div>
+                <div id="no-selection-msg" data-i18n="no_selection">選択されていません</div>
+                <div id="image-properties" class="hidden">
+                    <div class="property-group">
+                        <label data-i18n="alt_text">代替テキスト (Alt)</label>
+                        <input type="text" id="prop-alt" data-i18n="alt_placeholder" placeholder="画像の説明...">
+                    </div>
+                    <div class="property-group">
+                        <label><span data-i18n="size">サイズ</span> (<span id="width-val">300</span>px)</label>
+                        <input type="range" id="prop-width" min="50" max="1200" step="10">
+                    </div>
+                    <div class="property-group">
+                        <label data-i18n="alignment">配置</label>
+                        <div class="prop-toggle-group">
+                            <button data-align="left" data-i18n="align_left">左寄せ</button>
+                            <button data-align="center" data-i18n="align_center">中央</button>
+                            <button data-align="right" data-i18n="align_right">右寄せ</button>
+                        </div>
+                    </div>
+                    <div class="property-group" style="margin-top: 20px; font-size: 10px; color: #888;">
+                        <label data-i18n="asset_id">アセットID</label>
+                        <code id="prop-id"></code>
+                    </div>
+                </div>
+            </aside>
+        </main>
+        <footer id="status-bar">
+            <div class="status-item"><span id="stat-lines">0</span> <span data-i18n="lines">行</span></div>
+            <div class="status-item"><span id="stat-words">0</span> <span data-i18n="words">単語</span></div>
+            <div class="status-item"><span id="stat-chars">0</span> <span data-i18n="chars">文字</span></div>
+            <div class="status-spacer"></div>
+            <div class="status-item" id="save-status" data-i18n="saved">保存済み</div>
+            <div class="status-item" id="btn-help" style="cursor:pointer; border-left: 1px solid var(--border-color); padding-left: 10px;" data-i18n-title="help">
+                <i class="fas fa-question-circle"></i> <span data-i18n="help">ヘルプ</span>
+            </div>
+        </footer>
+    </div>
+    <div id="help-overlay" class="hidden">
+        <div class="help-content">
+            <div class="help-header">
+                <h3 data-i18n="shortcuts_title">キーボードショートカット</h3>
+                <button id="btn-close-help">&times;</button>
+            </div>
+            <div class="help-body">
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>B</kbd> <span data-i18n="shortcut_bold">太字</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>I</kbd> <span data-i18n="shortcut_italic">斜体</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>Z</kbd> <span data-i18n="shortcut_undo">元に戻す (Undo)</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>Y</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd> <span data-i18n="shortcut_redo">やり直し (Redo)</span></div>
+                <div class="help-item"><kbd>Ctrl</kbd> + <kbd>S</kbd> <span data-i18n="shortcut_pdf">PDF保存</span></div>
+                <div class="help-item"><kbd>Tab</kbd> <span data-i18n="shortcut_tab">4スペース挿入</span></div>
+                <div class="help-item"><kbd>MDドロップ</kbd> <span data-i18n="shortcut_md_drop">Markdownインポート</span></div>
+                <div class="help-item"><kbd>画像ドロップ</kbd> <span data-i18n="shortcut_img_drop">画像インポート</span></div>
+            </div>
+        </div>
+    </div>
+    <div id="presentation-overlay" class="hidden">
+        <div id="slide-container"></div>
+        <div id="presentation-controls">
+            <button id="btn-prev-slide"><i class="fas fa-chevron-left"></i></button>
+            <span id="slide-number">1 / 1</span>
+            <button id="btn-next-slide"><i class="fas fa-chevron-right"></i></button>
+            <button id="btn-exit-present" title="終了 (Esc)">&times;</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

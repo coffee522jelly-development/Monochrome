@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "identifier": "com.techmd.editor",
   "build": {
-    "frontendDist": "..",
+    "frontendDist": "../dist",
     "devUrl": null,
     "beforeDevCommand": "",
     "beforeBuildCommand": ""
@@ -42,10 +42,8 @@
         "installMode": "perMachine"
       },
       "wix": {
-        "language": ["ja-JP"],
-        "config": {
-          "template": null
-        }
+        "language": "ja-JP",
+        "template": null
       }
     }
   }

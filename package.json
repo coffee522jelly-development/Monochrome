@@ -5,8 +5,8 @@
   "main": "index.html",
   "scripts": {
     "tauri": "tauri",
-    "build": "echo 'No build step required for static files'",
-    "desktop": "tauri build"
+    "build": "mkdir -p dist && cp index.html style.css script.js dist/",
+    "desktop": "npm run build && tauri build"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.1.0"
