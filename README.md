@@ -53,7 +53,7 @@ WebAssembly版のMarkdownパーサー（`markdown-wasm`）を採用。大規模�
 ### ビルド手順
 1. Rust環境のセットアップ
 2. 依存関係のインストール: `npm install`
-3. ビルド実行: `npm run desktop`
+3. ビルド実行: `npm run tauri build`
 
 ビルドされたインストーラーは `src-tauri/target/release/bundle/` 内に生成されます。
 

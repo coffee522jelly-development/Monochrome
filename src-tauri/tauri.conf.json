@@ -7,7 +7,7 @@
     "frontendDist": "../dist",
     "devUrl": null,
     "beforeDevCommand": "",
-    "beforeBuildCommand": ""
+    "beforeBuildCommand": "npm run build"
   },
   "app": {
     "windows": [
