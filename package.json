@@ -4,7 +4,7 @@
   "description": "High Performance Markdown & Mermaid Editor",
   "main": "index.html",
   "scripts": {
-    "build": "mkdir -p dist && cp index.html style.css script.js dist/",
+    "build": "node build.js",
     "tauri": "tauri"
   },
   "devDependencies": {
