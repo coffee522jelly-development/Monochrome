@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "TECH-MD-EDITOR",
+  "productName": "Monochrome",
   "version": "1.0.0",
   "identifier": "com.techmd.editor",
   "build": {
