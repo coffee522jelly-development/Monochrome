@@ -870,6 +870,19 @@ function setupEventListeners() {
     };
     document.getElementById('btn-toc').onclick = createTOC;
 
+    // Paste handler for Document mode
+    editor.onpaste = (e) => {
+        if (AppState.viewMode === 'doc') {
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            if (pastedText) {
+                e.preventDefault();
+                // Replace single newlines with double newlines, but preserve existing double newlines
+                const formattedText = pastedText.replace(/(?<!\n)\n(?!\n)/g, '\n\n');
+                document.execCommand('insertText', false, formattedText);
+            }
+        }
+    };
+
     // Keydown enhancements
     editor.onkeydown = (e) => {
         if (e.key === 'Tab') { e.preventDefault(); insertAtCursor('    '); }
