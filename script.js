@@ -876,9 +876,60 @@ function setupEventListeners() {
             const pastedText = (e.clipboardData || window.clipboardData).getData('text');
             if (pastedText) {
                 e.preventDefault();
-                // Replace single newlines with double newlines, but preserve existing double newlines
-                const formattedText = pastedText.replace(/(?<!\n)\n(?!\n)/g, '\n\n');
-                document.execCommand('insertText', false, formattedText);
+
+                // Smart single-newline to double-newline converter
+                // We want to avoid double-spacing things that shouldn't be:
+                // - Lines inside code blocks (```...```)
+                // - List items (- , * , 1. )
+                // - Blockquotes (> )
+                // - Headers (# )
+
+                let isCodeBlock = false;
+                const lines = pastedText.split('\n');
+                const formattedLines = [];
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    const trimmedLine = line.trim();
+
+                    if (trimmedLine.startsWith('```')) {
+                        isCodeBlock = !isCodeBlock;
+                        formattedLines.push(line);
+                        continue;
+                    }
+
+                    formattedLines.push(line);
+
+                    // If we are not at the last line, and we are not in a code block,
+                    // and the current line is not empty, and the next line is not empty,
+                    // and we're not dealing with lists, blockquotes, or headers.
+                    if (i < lines.length - 1 && !isCodeBlock) {
+                        const nextLine = lines[i + 1].trim();
+                        const isEmpty = trimmedLine === '';
+                        const nextIsEmpty = nextLine === '';
+
+                        // Check if current or next line is a markdown element that shouldn't be separated
+                        const isList = /^[*\-+] /.test(trimmedLine) || /^\d+\. /.test(trimmedLine);
+                        const nextIsList = /^[*\-+] /.test(nextLine) || /^\d+\. /.test(nextLine);
+                        const isQuote = /^>/.test(trimmedLine);
+                        const nextIsQuote = /^>/.test(nextLine);
+                        const isHeader = /^#+ /.test(trimmedLine);
+                        const nextIsHeader = /^#+ /.test(nextLine);
+
+                        // If it's a standard text line transitioning to another standard text line, add a gap.
+                        if (!isEmpty && !nextIsEmpty) {
+                            // Don't add gap if we are in the middle of a list or quote block
+                            if ((isList && nextIsList) || (isQuote && nextIsQuote)) {
+                                // Keep single newline
+                            } else {
+                                // Add an extra newline for a paragraph break
+                                formattedLines.push('');
+                            }
+                        }
+                    }
+                }
+
+                document.execCommand('insertText', false, formattedLines.join('\n'));
             }
         }
     };
