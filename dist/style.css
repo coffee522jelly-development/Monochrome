@@ -439,6 +439,7 @@ input[type="range"] {
     background-color: var(--bg-color);
     width: 90%;
     max-width: 700px;
+    max-height: 90vh;
     border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
@@ -472,6 +473,33 @@ input[type="range"] {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    overflow-y: auto;
+}
+
+.settings-footer {
+    padding: 10px 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background-color: var(--toolbar-bg);
+}
+
+.settings-footer button {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--border-color) !important;
+}
+.btn-secondary:hover {
+    background-color: var(--hover-bg);
 }
 
 .preset-controls {
@@ -606,10 +634,6 @@ input[type="range"] {
 
 /* Print Optimization */
 @media print {
-    @page {
-        margin: 0;
-    }
-
     html, body {
         background-color: var(--bg-color) !important;
         color: var(--text-color) !important;

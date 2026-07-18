@@ -219,9 +219,25 @@
                         </div>
                     </div>
                     <div class="settings-group">
+                        <label data-i18n="pdf_margin_label">PDF余白 (Print Margin)</label>
+                        <div class="preset-controls">
+                            <select id="print-margin-selector" style="flex: 1;">
+                                <option value="0mm">なし (0mm)</option>
+                                <option value="5mm">狭い (5mm)</option>
+                                <option value="10mm">標準 (10mm)</option>
+                                <option value="15mm">やや広い (15mm)</option>
+                                <option value="20mm">広い (20mm)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="settings-group">
                         <label data-i18n="css_editor_label">CSS エディター</label>
                         <textarea id="custom-css-editor" data-i18n="css_editor_placeholder" spellcheck="false" placeholder="/* CSSを入力してください */"></textarea>
                     </div>
+                </div>
+                <div class="settings-footer">
+                    <button id="btn-settings-ok" class="btn-primary" data-i18n="ok">OK</button>
+                    <button id="btn-settings-cancel" class="btn-secondary" data-i18n="cancel">キャンセル (Cancel)</button>
                 </div>
             </div>
         </div>
