@@ -72,9 +72,6 @@ const translations = {
         start_present: "プレゼン開始",
         theme_toggle: "テーマ切り替え",
         settings_title: "外観・フォント設定",
-        ok: "OK",
-        cancel: "キャンセル",
-        pdf_margin_label: "PDF余白 (Print Margin)",
         css_presets_label: "CSS プリセット",
         sys_standard: "--- システム標準 ---",
         p_technical: "TECHNICAL (テクニカル)",
@@ -227,9 +224,6 @@ const translations = {
         preset_name_placeholder: "Enter preset name...",
         save: "Save",
         font_label: "Preview Font & Size",
-        ok: "OK",
-        cancel: "Cancel",
-        pdf_margin_label: "PDF Margin",
         slide_print_label: "Slide Print Settings",
         print_1up: "Standard (1 slide/page)",
         print_2up: "Handout (2 slides/page - A4 Portrait)",
@@ -695,16 +689,6 @@ function applyCustomCss(css) {
     localStorage.setItem('customCss', css);
 }
 
-function updatePrintMargin(margin) {
-    let styleEl = document.getElementById('dynamic-print-margin-style');
-    if (!styleEl) {
-        styleEl = document.createElement('style');
-        styleEl.id = 'dynamic-print-margin-style';
-        document.head.appendChild(styleEl);
-    }
-    styleEl.textContent = `@media print { @page { margin: ${margin} !important; } }`;
-}
-
 // Auto-save logic
 function autoSave() {
     const status = document.getElementById('save-status');
@@ -769,10 +753,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('font-size-input').value = fontSize;
         document.documentElement.style.setProperty('--preview-font-size', fontSize + 'px');
     }
-
-    const printMargin = localStorage.getItem('printMargin') || '10mm';
-    document.getElementById('print-margin-selector').value = printMargin;
-    updatePrintMargin(printMargin);
 
     I18n.updateUI();
 
@@ -888,82 +868,7 @@ function setupEventListeners() {
         localStorage.setItem('printLayout', e.target.value);
         updatePreview();
     };
-
-    document.getElementById('print-margin-selector').onchange = (e) => {
-        const val = e.target.value;
-        localStorage.setItem('printMargin', val);
-        updatePrintMargin(val);
-    };
-
-    const hideSettings = () => document.getElementById('settings-panel').classList.add('hidden');
-    document.getElementById('btn-settings-ok').onclick = hideSettings;
-    document.getElementById('btn-settings-cancel').onclick = hideSettings;
-
     document.getElementById('btn-toc').onclick = createTOC;
-
-    // Paste handler for Document mode
-    editor.onpaste = (e) => {
-        if (AppState.viewMode === 'doc') {
-            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-            if (pastedText) {
-                e.preventDefault();
-
-                // Smart single-newline to double-newline converter
-                // We want to avoid double-spacing things that shouldn't be:
-                // - Lines inside code blocks (```...```)
-                // - List items (- , * , 1. )
-                // - Blockquotes (> )
-                // - Headers (# )
-
-                let isCodeBlock = false;
-                const lines = pastedText.split('\n');
-                const formattedLines = [];
-
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i];
-                    const trimmedLine = line.trim();
-
-                    if (trimmedLine.startsWith('```')) {
-                        isCodeBlock = !isCodeBlock;
-                        formattedLines.push(line);
-                        continue;
-                    }
-
-                    formattedLines.push(line);
-
-                    // If we are not at the last line, and we are not in a code block,
-                    // and the current line is not empty, and the next line is not empty,
-                    // and we're not dealing with lists, blockquotes, or headers.
-                    if (i < lines.length - 1 && !isCodeBlock) {
-                        const nextLine = lines[i + 1].trim();
-                        const isEmpty = trimmedLine === '';
-                        const nextIsEmpty = nextLine === '';
-
-                        // Check if current or next line is a markdown element that shouldn't be separated
-                        const isList = /^[*\-+] /.test(trimmedLine) || /^\d+\. /.test(trimmedLine);
-                        const nextIsList = /^[*\-+] /.test(nextLine) || /^\d+\. /.test(nextLine);
-                        const isQuote = /^>/.test(trimmedLine);
-                        const nextIsQuote = /^>/.test(nextLine);
-                        const isHeader = /^#+ /.test(trimmedLine);
-                        const nextIsHeader = /^#+ /.test(nextLine);
-
-                        // If it's a standard text line transitioning to another standard text line, add a gap.
-                        if (!isEmpty && !nextIsEmpty) {
-                            // Don't add gap if we are in the middle of a list or quote block
-                            if ((isList && nextIsList) || (isQuote && nextIsQuote)) {
-                                // Keep single newline
-                            } else {
-                                // Add an extra newline for a paragraph break
-                                formattedLines.push('');
-                            }
-                        }
-                    }
-                }
-
-                document.execCommand('insertText', false, formattedLines.join('\n'));
-            }
-        }
-    };
 
     // Keydown enhancements
     editor.onkeydown = (e) => {

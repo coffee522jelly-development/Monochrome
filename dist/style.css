@@ -47,22 +47,6 @@ body, html {
     color: var(--text-color);
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 0;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #666;
-}
-
 #app {
     display: flex;
     flex-direction: column;
@@ -439,7 +423,6 @@ input[type="range"] {
     background-color: var(--bg-color);
     width: 90%;
     max-width: 700px;
-    max-height: 90vh;
     border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
@@ -473,33 +456,6 @@ input[type="range"] {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    overflow-y: auto;
-}
-
-.settings-footer {
-    padding: 10px 20px;
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    background-color: var(--toolbar-bg);
-}
-
-.settings-footer button {
-    padding: 8px 16px;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 12px;
-}
-
-.btn-secondary {
-    background-color: transparent;
-    color: var(--text-color);
-    border: 1px solid var(--border-color) !important;
-}
-.btn-secondary:hover {
-    background-color: var(--hover-bg);
 }
 
 .preset-controls {
@@ -635,8 +591,8 @@ input[type="range"] {
 /* Print Optimization */
 @media print {
     html, body {
-        background-color: #ffffff !important;
-        color: #000000 !important;
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
         print-color-adjust: exact !important;
         -webkit-print-color-adjust: exact !important;
     }
@@ -657,20 +613,20 @@ input[type="range"] {
         width: 100% !important;
         height: auto !important;
         overflow: visible !important;
-        background-color: #ffffff !important;
+        background-color: var(--bg-color) !important;
         padding: 0 !important;
     }
 
     #preview {
         padding: 15mm !important;
         width: 100% !important;
-        background-color: #ffffff !important;
-        color: #000000 !important;
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
     }
 
     .markdown-body {
         font-size: var(--preview-font-size) !important;
-        color: #000000 !important;
+        color: var(--text-color) !important;
         background-color: transparent !important;
         print-color-adjust: exact !important;
         -webkit-print-color-adjust: exact !important;
