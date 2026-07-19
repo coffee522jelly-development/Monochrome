@@ -635,8 +635,8 @@ input[type="range"] {
 /* Print Optimization */
 @media print {
     html, body {
-        background-color: var(--bg-color) !important;
-        color: var(--text-color) !important;
+        background-color: #ffffff !important;
+        color: #000000 !important;
         print-color-adjust: exact !important;
         -webkit-print-color-adjust: exact !important;
     }
@@ -657,20 +657,20 @@ input[type="range"] {
         width: 100% !important;
         height: auto !important;
         overflow: visible !important;
-        background-color: var(--bg-color) !important;
+        background-color: #ffffff !important;
         padding: 0 !important;
     }
 
     #preview {
         padding: 15mm !important;
         width: 100% !important;
-        background-color: var(--bg-color) !important;
-        color: var(--text-color) !important;
+        background-color: #ffffff !important;
+        color: #000000 !important;
     }
 
     .markdown-body {
         font-size: var(--preview-font-size) !important;
-        color: var(--text-color) !important;
+        color: #000000 !important;
         background-color: transparent !important;
         print-color-adjust: exact !important;
         -webkit-print-color-adjust: exact !important;
