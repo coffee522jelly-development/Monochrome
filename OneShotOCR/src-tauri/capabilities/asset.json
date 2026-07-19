@@ -6,10 +6,7 @@
   "permissions": [
     "core:path:default",
     "core:window:default",
-    {
-      "identifier": "core:webview:allow-webview-custom-protocol",
-      "allow": [{"scheme": "asset"}]
-    },
+    "core:webview:allow-set-webview-custom-protocols",
     {
       "identifier": "fs:allow-read",
       "allow": ["**"]
