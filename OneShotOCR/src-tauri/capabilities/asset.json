@@ -6,7 +6,7 @@
   "permissions": [
     "core:path:default",
     "core:window:default",
-    "core:webview:allow-set-webview-custom-protocols",
+    "core:webview:allow-webview-custom-protocol",
     {
       "identifier": "fs:allow-read",
       "allow": ["**"]
