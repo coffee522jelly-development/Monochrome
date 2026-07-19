@@ -770,7 +770,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         document.documentElement.style.setProperty('--preview-font-size', fontSize + 'px');
     }
 
-    const printMargin = localStorage.getItem('printMargin') || '0mm';
+    const printMargin = localStorage.getItem('printMargin') || '10mm';
     document.getElementById('print-margin-selector').value = printMargin;
     updatePrintMargin(printMargin);
 
